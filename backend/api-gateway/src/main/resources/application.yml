@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "configserver:"
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
+      username: configuser
+      password: configpassword
+      fail-fast: false
+      retry:
+        max-attempts: 10
+        initial-interval: 3000
+        max-interval: 10000
+        multiplier: 2
+      profile: ${SPRING_PROFILES_ACTIVE:local}
+
+# Cấu hình cho SpringDoc OpenAPI (Swagger)
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    use-root-path: true
+    urls:
+      - url: /v3/api-docs/listing-service
+        name: Listing Service API
+      - url: /v3/api-docs/payment-service
+        name: Payment Service API
+      - url: /v3/api-docs/rental-service
+        name: Rental Service API
+      - url: /v3/api-docs/sales-service
+        name: Sales Service API
+      - url: /v3/api-docs/security-service
+        name: Security Service API
+    disable-swagger-default-url: true
+  cache:
+    disabled: true
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true

@@ -1,0 +1,54 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  
+  # Cấu hình bảo mật cơ bản
+  security:
+    user:
+      name: configuser
+      password: configpassword
+  
+  # Cấu hình lưu trữ cấu hình, có thể sử dụng local file system hoặc Git repository
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+        # Nếu muốn dùng Git repository, bỏ comment các dòng bên dưới và comment native section
+        # git:
+        #   uri: https://github.com/yourusername/proptech-config
+        #   clone-on-start: true
+        #   default-label: main
+
+  # Cấu hình các file cấu hình dựa trên môi trường (profiles)
+  profiles:
+    active: native
+
+# Cấu hình cho Spring Boot Actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.config: DEBUG
+
+# Cấu hình cho Docker environment
+---
+spring:
+  config:
+    activate:
+      on-profile: docker 

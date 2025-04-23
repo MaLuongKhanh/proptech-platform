@@ -1,0 +1,21 @@
+1. Config Server
+Tác dụng: Quản lý tập trung cấu hình cho tất cả các dịch vụ trong hệ thống microservice.
+Giải thích:
+Trong kiến trúc microservice, mỗi dịch vụ có thể cần các cấu hình khác nhau tùy theo môi trường (ví dụ: development, staging, production). Nếu quản lý cấu hình riêng lẻ cho từng dịch vụ, việc này sẽ phức tạp và dễ xảy ra lỗi. Config Server giải quyết vấn đề này bằng cách:
+Lưu trữ tất cả cấu hình ở một nơi tập trung (như Git repository hoặc hệ thống tệp).
+Cho phép các dịch vụ lấy cấu hình từ Config Server khi khởi động hoặc khi cần cập nhật.
+Lợi ích:
+Quản lý dễ dàng: Chỉ cần cập nhật cấu hình ở một chỗ, các dịch vụ sẽ tự động nhận được thay đổi.
+Hỗ trợ nhiều môi trường: Dễ dàng chuyển đổi cấu hình giữa các môi trường mà không cần sửa mã nguồn.
+Tăng tính bảo mật: Có thể thêm các biện pháp bảo vệ để chỉ các dịch vụ được phép mới truy cập cấu hình.
+
+2. Discovery Server
+Tác dụng: Giúp các dịch vụ trong hệ thống microservice tìm thấy và giao tiếp với nhau một cách động.
+Giải thích:
+Trong microservice, các dịch vụ có thể được triển khai linh hoạt, thay đổi địa chỉ (IP/port) hoặc tăng/giảm số lượng instance. Nếu hard-code địa chỉ của từng dịch vụ, hệ thống sẽ không thể hoạt động hiệu quả. Discovery Server (như Eureka Server) giải quyết vấn đề này bằng cách:
+Cho phép các dịch vụ đăng ký (register) khi khởi động và hủy đăng ký (deregister) khi tắt.
+Cung cấp khả năng tra cứu (discover) để các dịch vụ khác biết được vị trí của nhau.
+Lợi ích:
+Khám phá động: Các dịch vụ tự động tìm thấy nhau mà không cần cấu hình tĩnh.
+Cân bằng tải: Hỗ trợ phân phối yêu cầu đến các instance khác nhau của một dịch vụ.
+Khả năng phục hồi: Nếu một instance gặp sự cố, hệ thống có thể chuyển sang instance khác.

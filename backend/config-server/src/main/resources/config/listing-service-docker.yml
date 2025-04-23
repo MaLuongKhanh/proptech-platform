@@ -1,0 +1,71 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: listing-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://mongodb:27017/proptech_listing}
+      auto-index-creation: true
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:rabbitmq}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://discovery-server:8761/eureka}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+
+logging:
+  level:
+    root: INFO
+    vn.proptech: DEBUG
+    org.springframework.data.mongodb: DEBUG
+    org.springframework.amqp.rabbit: INFO
+
+# Application specific properties
+listing:
+  rabbitmq:
+    exchange: proptech.listing
+    queues:
+      listing-created: listing.created
+      listing-updated: listing.updated
+      listing-deleted: listing.deleted
+    routing-keys:
+      listing-created: listing.created
+      listing-updated: listing.updated
+      listing-deleted: listing.deleted
+
+property:
+  rabbitmq:
+    exchange: proptech.property
+    queues:
+      property-created: property.created
+      property-updated: property.updated
+      property-deleted: property.deleted
+    routing-keys:
+      property-created: property.created
+      property-updated: property.updated
+      property-deleted: property.deleted
