@@ -1,0 +1,257 @@
+version: '3.8'
+
+services:
+  # Config Server - Service quản lý cấu hình tập trung
+  config-server:
+    image: ${REGISTRY:-localhost}/proptech/config-server:latest
+    build:
+      context: ../config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker,native
+      # Giảm thời gian khởi động và cải thiện sự ổn định
+      - SPRING_CLOUD_CONFIG_SERVER_BOOTSTRAP=true
+      - SERVER_STARTUP_TIMEOUT=120
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+      update_config:
+        order: start-first
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  # Discovery Server - Service discovery với Eureka
+  discovery-server:
+    image: ${REGISTRY:-localhost}/proptech/discovery-server:latest
+    build:
+      context: ../discovery-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_INSTANCE_HOSTNAME=discovery-server
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      # Cấu hình để chờ Config Server sẵn sàng
+      - SPRING_CLOUD_CONFIG_FAIL_FAST=true
+      - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
+      - SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS=20
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 5
+      update_config:
+        order: start-first
+        failure_action: rollback
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    depends_on:
+      - config-server
+
+  # API Gateway - API Gateway sử dụng Spring Cloud Gateway
+  api-gateway:
+    image: ${REGISTRY:-localhost}/proptech/api-gateway:latest
+    build:
+      context: ../api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_APPLICATION_NAME=api-gateway
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_INSTANCE_HOSTNAME=api-gateway
+      # Cấu hình cho route các API
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=listing-service-all-apis
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://listing-service:8081
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/api/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].FILTERS[0]=StripPrefix=0
+      # Cấu hình để chờ Discovery Server và Config Server
+      - SPRING_CLOUD_CONFIG_FAIL_FAST=true
+      - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
+      - SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS=20
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+    depends_on:
+      - config-server
+      - discovery-server
+
+  # Listing Service - Service quản lý danh sách bất động sản
+  listing-service:
+    image: ${REGISTRY:-localhost}/proptech/listing-service:latest
+    build:
+      context: ../listing-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_APPLICATION_NAME=listing-service
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_INSTANCE_HOSTNAME=listing-service
+      # Cloudinary configuration
+      - CLOUDINARY_NAME=dllmkzuzi
+      - CLOUDINARY_API_KEY=192678347621528
+      - CLOUDINARY_API_SECRET=IA1rJ9X9Qv_OgVKGlD2HL2pSVkI
+      # Cấu hình để chờ Discovery Server và Config Server
+      - SPRING_CLOUD_CONFIG_FAIL_FAST=true
+      - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
+      - SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS=20
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+    depends_on:
+      - config-server
+      - discovery-server
+
+  # RabbitMQ - Message broker
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - proptech-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
+  # MongoDB - Database
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb_data:/data/db
+    networks:
+      - proptech-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+
+  # Prometheus - Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - proptech-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+
+  # Grafana - Visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    networks:
+      - proptech-network
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
+
+volumes:
+  mongodb_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+networks:
+  proptech-network:
+    driver: overlay
+    attachable: true
