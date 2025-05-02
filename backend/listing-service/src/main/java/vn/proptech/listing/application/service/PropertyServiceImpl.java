@@ -12,7 +12,6 @@ import vn.proptech.listing.application.mapper.Input.AddPropertyRequestMapper;
 import vn.proptech.listing.application.mapper.Output.GetPropertyResponseMapper;
 import vn.proptech.listing.domain.model.Property;
 import vn.proptech.listing.domain.repository.PropertyRepository;
-import vn.proptech.listing.domain.service.PropertyService;
 import vn.proptech.listing.infrastructure.messaging.PropertyEventPublisher;
 
 import java.util.List;

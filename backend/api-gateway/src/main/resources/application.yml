@@ -30,8 +30,8 @@ springdoc:
         name: Payment Service API
       - url: /v3/api-docs/rental-service
         name: Rental Service API
-      - url: /v3/api-docs/sales-service
-        name: Sales Service API
+      - url: /v3/api-docs/sale-service
+        name: Sale Service API
       - url: /v3/api-docs/security-service
         name: Security Service API
     disable-swagger-default-url: true

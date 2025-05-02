@@ -95,8 +95,13 @@ services:
       # Cấu hình cho route các API
       - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=listing-service-all-apis
       - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://listing-service:8081
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/api/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/api/listings/**
       - SPRING_CLOUD_GATEWAY_ROUTES[0].FILTERS[0]=StripPrefix=0
+      # Thêm cấu hình route cho sale-service
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].ID=sale-service-all-apis
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].URI=http://sale-service:8084
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].PREDICATES[0]=Path=/api/sales/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].FILTERS[0]=StripPrefix=0
       # Cấu hình để chờ Discovery Server và Config Server
       - SPRING_CLOUD_CONFIG_FAIL_FAST=true
       - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
@@ -166,6 +171,52 @@ services:
     depends_on:
       - config-server
       - discovery-server
+
+  # Sale Service - Service quản lý giao dịch và hợp đồng
+  sale-service:
+    image: ${REGISTRY:-localhost}/proptech/sale-service:latest
+    build:
+      context: ../sale-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_APPLICATION_NAME=sale-service
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_INSTANCE_HOSTNAME=sale-service
+      # Cloudinary configuration
+      - CLOUDINARY_NAME=dllmkzuzi
+      - CLOUDINARY_API_KEY=192678347621528
+      - CLOUDINARY_API_SECRET=IA1rJ9X9Qv_OgVKGlD2HL2pSVkI
+      # Cấu hình để chờ Discovery Server và Config Server
+      - SPRING_CLOUD_CONFIG_FAIL_FAST=true
+      - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
+      - SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS=20
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+    depends_on:
+      - config-server
+      - discovery-server
+      - rabbitmq
+      - mongodb
 
   # RabbitMQ - Message broker
   rabbitmq:

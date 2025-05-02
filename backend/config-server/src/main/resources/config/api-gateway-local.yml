@@ -13,22 +13,13 @@ spring:
           route-id-prefix: ""
           url-expression: "'lb://' + serviceId"
       routes:
-        - id: listing-service-listings
+        - id: listing-service
           uri: lb://listing-service
           predicates:
             - Path=/api/listings/**
-          filters:
-            - RewritePath=/api/listings/(?<segment>.*), /api/listings/${segment}
 
-        - id: listing-service-properties
-          uri: lb://listing-service
-          predicates:
-            - Path=/api/properties/**
-          filters:
-            - RewritePath=/api/properties/(?<segment>.*), /api/properties/${segment}
-
-        - id: sales-service
-          uri: lb://sales-service
+        - id: sale-service
+          uri: lb://sale-service
           predicates:
             - Path=/api/sales/**
 

@@ -1,4 +1,4 @@
-package vn.proptech.listing.domain.service;
+package vn.proptech.listing.application.service;
 
 import vn.proptech.listing.application.dto.Input.AddPropertyRequest;
 import vn.proptech.listing.application.dto.Input.GetPropertyRequest;

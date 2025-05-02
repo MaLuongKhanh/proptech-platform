@@ -1,12 +1,12 @@
 server:
-  port: 8081
+  port: 8084
 
 spring:
   application:
-    name: listing-service
+    name: sale-service
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/proptech_listing}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/proptech_sale}
       auto-index-creation: true
 
   rabbitmq:
@@ -46,26 +46,26 @@ logging:
     org.springframework.amqp.rabbit: INFO
 
 # Application specific properties
-listing:
+contract:
   rabbitmq:
-    exchange: proptech.listing
+    exchange: proptech.contract
     queues:
-      listing-created: listing.created
-      listing-updated: listing.updated
-      listing-deleted: listing.deleted
+      contract-created: contract.created
+      contract-updated: contract.updated
+      contract-deleted: contract.deleted
     routing-keys:
-      listing-created: listing.created
-      listing-updated: listing.updated
-      listing-deleted: listing.deleted
+      contract-created: contract.created
+      contract-updated: contract.updated
+      contract-deleted: contract.deleted
 
-property:
+transaction:
   rabbitmq:
-    exchange: proptech.property
+    exchange: proptech.transaction
     queues:
-      property-created: property.created
-      property-updated: property.updated
-      property-deleted: property.deleted
+      transaction-created: transaction.created
+      transaction-updated: transaction.updated
+      transaction-deleted: transaction.deleted
     routing-keys:
-      property-created: property.created
-      property-updated: property.updated
-      property-deleted: property.deleted
+      transaction-created: transaction.created
+      transaction-updated: transaction.updated
+      transaction-deleted: transaction.deleted

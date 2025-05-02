@@ -18,8 +18,6 @@ import vn.proptech.listing.application.mapper.Output.GetListingResponseMapper;
 import vn.proptech.listing.domain.model.Listing;
 import vn.proptech.listing.domain.model.ListingType;
 import vn.proptech.listing.domain.repository.ListingRepository;
-import vn.proptech.listing.domain.service.ListingService;
-import vn.proptech.listing.domain.service.PropertyService;
 import vn.proptech.listing.infrastructure.messaging.ListingEventPublisher;
 
 import java.io.File;

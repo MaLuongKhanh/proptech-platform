@@ -16,10 +16,17 @@ spring:
           predicates:
             - Path=/api/listings/**
 
-        - id: sales-service
-          uri: lb://sales-service
+        - id: sale-service
+          uri: lb://sale-service
           predicates:
             - Path=/api/sales/**
+
+        # - id: sale-service-transactions
+        #   uri: lb://sale-service
+        #   predicates:
+        #     - Path=/api/transactions/**
+        #   filters:
+        #     - RewritePath=/api/transactions/(?<segment>.*), /api/transactions/${segment}
 
         - id: rental-service
           uri: lb://rental-service

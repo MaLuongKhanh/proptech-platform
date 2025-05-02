@@ -29,11 +29,17 @@ public class SwaggerConfiguration {
                         .filters(f -> f.rewritePath("/v3/api-docs/rental-service/(?<path>.*)", "/v3/api-docs/$\\{path}"))
                         .uri("lb://rental-service"))
                         
-                // Route for sales service swagger docs
+                // Route for sale service swagger docs (corrected from sales-service)
+                .route("sale-service-swagger", r -> r
+                        .path("/v3/api-docs/sale-service/**")
+                        .filters(f -> f.rewritePath("/v3/api-docs/sale-service/(?<path>.*)", "/v3/api-docs/$\\{path}"))
+                        .uri("lb://sale-service"))
+                        
+                // Keep the old route temporarily for backward compatibility
                 .route("sales-service-swagger", r -> r
                         .path("/v3/api-docs/sales-service/**")
                         .filters(f -> f.rewritePath("/v3/api-docs/sales-service/(?<path>.*)", "/v3/api-docs/$\\{path}"))
-                        .uri("lb://sales-service"))
+                        .uri("lb://sale-service"))
                         
                 // Route for security service swagger docs
                 .route("security-service-swagger", r -> r

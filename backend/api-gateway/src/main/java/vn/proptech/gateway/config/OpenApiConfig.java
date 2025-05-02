@@ -21,7 +21,7 @@ public class OpenApiConfig {
                     "listing-service",
                     "payment-service",
                     "rental-service",
-                    "sales-service",
+                    "sale-service",  // Corrected from "sales-service" to "sale-service"
                     "security-service"
             };
             

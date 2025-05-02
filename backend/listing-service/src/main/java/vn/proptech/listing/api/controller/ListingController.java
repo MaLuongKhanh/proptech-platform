@@ -1,4 +1,4 @@
-package vn.proptech.listing.api;
+package vn.proptech.listing.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,15 +10,16 @@ import vn.proptech.listing.application.dto.Input.AddListingRequest;
 import vn.proptech.listing.application.dto.Input.GetListingRequest;
 import vn.proptech.listing.application.dto.Input.UpdateListingRequest;
 import vn.proptech.listing.application.dto.Output.GetListingResponse;
+import vn.proptech.listing.application.service.ListingService;
 import vn.proptech.listing.api.common.ApiResponse;
-import vn.proptech.listing.domain.service.ListingService;
+
 import org.springframework.http.MediaType;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/listings")
+@RequestMapping("/api/listings/listings")
 @RequiredArgsConstructor
 @Slf4j
 public class ListingController {
