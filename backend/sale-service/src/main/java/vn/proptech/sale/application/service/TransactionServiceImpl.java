@@ -11,8 +11,12 @@ import vn.proptech.sale.application.mapper.input.AddTransactionRequestMapper;
 import vn.proptech.sale.application.mapper.output.GetTransactionResponseMapper;
 import vn.proptech.sale.domain.model.Transaction;
 import vn.proptech.sale.domain.repository.TransactionRepository;
+import vn.proptech.sale.infrastructure.client.ListingServiceClient;
+import vn.proptech.sale.infrastructure.client.dto.ApiResponse;
+import vn.proptech.sale.infrastructure.client.dto.GetListingResponse;
 import vn.proptech.sale.infrastructure.messaging.TransactionEventPublisher;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,13 +28,29 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final TransactionEventPublisher eventPublisher;
+    private final ListingServiceClient listingServiceClient;
 
     @Override
     public GetTransactionResponse createTransaction(AddTransactionRequest request) {
         log.info("Creating transaction with request: {}", request);
         try {
             String newId = UUID.randomUUID().toString();
-            //find propertyId by listingId
+            
+            // Lấy propertyId từ listing service thông qua Feign Client
+            String propertyId = null;
+            if (request.getListingId() != null) {
+                try {
+                    ApiResponse<GetListingResponse> response = listingServiceClient.getListingById(request.getListingId());
+                    if (response != null && response.getData() != null) {
+                        GetListingResponse listing = response.getData();
+                        propertyId = listing.getPropertyId();
+                        log.info("Found propertyId: {} for listingId: {}", propertyId, request.getListingId());
+                    }
+                } catch (Exception e) {
+                    log.warn("Error getting property from listing service: {}", e.getMessage());
+                    // Tiếp tục xử lý mà không cần propertyId
+                }
+            }
 
             // Map DTO to Entity
             Transaction transaction = AddTransactionRequestMapper.AddTransactionMapDTOToEntity(
@@ -38,10 +58,17 @@ public class TransactionServiceImpl implements TransactionService {
                 newId
             );
             transaction.setActive(true);
+            
+            // Gán propertyId vào transaction nếu tìm thấy
+            if (propertyId != null) {
+                transaction.setPropertyId(propertyId);
+            }
+
+            transaction.setCreatedAt(Instant.now());
 
             Transaction savedTransaction = transactionRepository.save(transaction);
 
-            // Publish event
+            // Publish event thông qua RabbitMQ
             eventPublisher.publishTransactionCreatedEvent(savedTransaction);
 
             log.info("Transaction created successfully with ID: {}", savedTransaction.getId());

@@ -55,6 +55,8 @@ public class RentalContractServiceImpl implements RentalContractService {
             );
             contract.setActive(true);
 
+            contract.setCreatedAt(Instant.now());
+
             RentalContract savedContract = contractRepository.save(contract);
 
             // Publish event

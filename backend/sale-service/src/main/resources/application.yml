@@ -24,6 +24,14 @@ spring:
         max-interval: 10000
         multiplier: 2
       profile: ${SPRING_PROFILES_ACTIVE:local}
+    # Cấu hình OpenFeign timeout
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
 
 # Cấu hình cho SpringDoc OpenAPI (Swagger)
 springdoc:

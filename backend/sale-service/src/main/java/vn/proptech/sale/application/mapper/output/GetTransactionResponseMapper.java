@@ -20,6 +20,7 @@ public class GetTransactionResponseMapper {
                 .status(transaction.getStatus())
                 .createdAt(transaction.getCreatedAt())
                 .updatedAt(transaction.getUpdatedAt())
+                .isActive(transaction.isActive())
                 .build();
     }
 }

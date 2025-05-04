@@ -57,6 +57,8 @@ public class ContractServiceImpl implements ContractService {
             );
             contract.setActive(true);
 
+            contract.setCreatedAt(Instant.now());
+
             Contract savedContract = contractRepository.save(contract);
 
             // Publish event

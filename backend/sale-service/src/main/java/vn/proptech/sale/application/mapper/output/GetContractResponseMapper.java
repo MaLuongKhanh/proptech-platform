@@ -16,6 +16,7 @@ public class GetContractResponseMapper {
             .fileUrl(contract.getFileUrl())
             .uploadBy(contract.getUploadBy())
             .fileName(contract.getFileName())
+            .isActive(contract.isActive())
             .build();
     }
 
