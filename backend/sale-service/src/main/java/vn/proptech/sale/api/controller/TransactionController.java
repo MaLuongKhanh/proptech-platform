@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import vn.proptech.sale.api.common.ApiResponse;
 import vn.proptech.sale.application.dto.input.AddTransactionRequest;
 import vn.proptech.sale.application.dto.input.GetTransactionRequest;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/sales/transactions")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Sale Transaction", description = "Sale Transaction management APIs")
 public class TransactionController {
 
     private final TransactionService transactionService;

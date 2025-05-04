@@ -13,7 +13,6 @@ import vn.proptech.sale.domain.model.Transaction;
 import vn.proptech.sale.domain.repository.TransactionRepository;
 import vn.proptech.sale.infrastructure.messaging.TransactionEventPublisher;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,6 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
         log.info("Creating transaction with request: {}", request);
         try {
             String newId = UUID.randomUUID().toString();
+            //find propertyId by listingId
 
             // Map DTO to Entity
             Transaction transaction = AddTransactionRequestMapper.AddTransactionMapDTOToEntity(

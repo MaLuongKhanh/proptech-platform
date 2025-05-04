@@ -1,0 +1,75 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: rental-service
+
+  # MongoDB configuration
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/proptech_rental
+      auto-index-creation: true
+
+  # RabbitMQ configuration
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+# Eureka client configuration
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+
+logging:
+  level:
+    root: INFO
+    vn.proptech: DEBUG
+    org.springframework.data.mongodb: INFO
+    org.springframework.amqp.rabbit: INFO
+
+# Application specific properties
+contract:
+  rabbitmq:
+    exchange: proptech.contract
+    queues:
+      contract-created: contract.created
+      contract-updated: contract.updated
+      contract-deleted: contract.deleted
+    routing-keys:
+      contract-created: contract.created
+      contract-updated: contract.updated
+      contract-deleted: contract.deleted
+
+transaction:
+  rabbitmq:
+    exchange: proptech.transaction
+    queues:
+      transaction-created: transaction.created
+      transaction-updated: transaction.updated
+      transaction-deleted: transaction.deleted
+    routing-keys:
+      transaction-created: transaction.created
+      transaction-updated: transaction.updated
+      transaction-deleted: transaction.deleted

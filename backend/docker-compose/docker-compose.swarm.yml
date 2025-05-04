@@ -75,8 +75,6 @@ services:
         limits:
           cpus: '0.5'
           memory: 512M
-    depends_on:
-      - config-server
 
   # API Gateway - API Gateway sử dụng Spring Cloud Gateway
   api-gateway:
@@ -97,11 +95,16 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://listing-service:8081
       - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/api/listings/**
       - SPRING_CLOUD_GATEWAY_ROUTES[0].FILTERS[0]=StripPrefix=0
-      # Thêm cấu hình route cho sale-service
+
       - SPRING_CLOUD_GATEWAY_ROUTES[1].ID=sale-service-all-apis
       - SPRING_CLOUD_GATEWAY_ROUTES[1].URI=http://sale-service:8084
       - SPRING_CLOUD_GATEWAY_ROUTES[1].PREDICATES[0]=Path=/api/sales/**
       - SPRING_CLOUD_GATEWAY_ROUTES[1].FILTERS[0]=StripPrefix=0
+
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].ID=rental-service-all-apis
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].URI=http://rental-service:8085
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].PREDICATES[0]=Path=/api/rentals/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[2].FILTERS[0]=StripPrefix=0
       # Cấu hình để chờ Discovery Server và Config Server
       - SPRING_CLOUD_CONFIG_FAIL_FAST=true
       - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
@@ -124,9 +127,6 @@ services:
         limits:
           cpus: '0.5'
           memory: 512M
-    depends_on:
-      - config-server
-      - discovery-server
 
   # Listing Service - Service quản lý danh sách bất động sản
   listing-service:
@@ -146,10 +146,7 @@ services:
       - CLOUDINARY_NAME=dllmkzuzi
       - CLOUDINARY_API_KEY=192678347621528
       - CLOUDINARY_API_SECRET=IA1rJ9X9Qv_OgVKGlD2HL2pSVkI
-      # Cấu hình để chờ Discovery Server và Config Server
-      - SPRING_CLOUD_CONFIG_FAIL_FAST=true
-      - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
-      - SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS=20
+
     networks:
       - proptech-network
     healthcheck:
@@ -168,9 +165,6 @@ services:
         limits:
           cpus: '0.5'
           memory: 768M
-    depends_on:
-      - config-server
-      - discovery-server
 
   # Sale Service - Service quản lý giao dịch và hợp đồng
   sale-service:
@@ -190,10 +184,7 @@ services:
       - CLOUDINARY_NAME=dllmkzuzi
       - CLOUDINARY_API_KEY=192678347621528
       - CLOUDINARY_API_SECRET=IA1rJ9X9Qv_OgVKGlD2HL2pSVkI
-      # Cấu hình để chờ Discovery Server và Config Server
-      - SPRING_CLOUD_CONFIG_FAIL_FAST=true
-      - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
-      - SPRING_CLOUD_CONFIG_RETRY_MAX_ATTEMPTS=20
+
     networks:
       - proptech-network
     healthcheck:
@@ -212,11 +203,45 @@ services:
         limits:
           cpus: '0.5'
           memory: 768M
-    depends_on:
-      - config-server
-      - discovery-server
-      - rabbitmq
-      - mongodb
+
+
+  # Rental Service - Service quản lý cho thuê bất động sản
+  rental-service:
+    image: ${REGISTRY:-localhost}/proptech/rental-service:latest
+    build:
+      context: ../rental-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_APPLICATION_NAME=rental-service
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_INSTANCE_HOSTNAME=rental-service
+      # Cloudinary configuration
+      - CLOUDINARY_NAME=dllmkzuzi
+      - CLOUDINARY_API_KEY=192678347621528
+      - CLOUDINARY_API_SECRET=IA1rJ9X9Qv_OgVKGlD2HL2pSVkI
+
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
 
   # RabbitMQ - Message broker
   rabbitmq:

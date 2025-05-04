@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import vn.proptech.sale.api.common.ApiResponse;
 import vn.proptech.sale.application.dto.input.AddContractRequest;
 import vn.proptech.sale.application.dto.input.GetContractRequest;
@@ -21,6 +22,7 @@ import java.util.List;
 @RequestMapping("/api/sales/contracts")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Sale Contract", description = "Sale Contract management APIs")
 public class ContractController {
 
     private final ContractService contractService;
