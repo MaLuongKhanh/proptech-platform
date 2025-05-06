@@ -243,6 +243,40 @@ services:
           cpus: '0.5'
           memory: 768M
 
+  # Payment Service - Service quản lý thanh toán
+  payment-service:
+    image: ${REGISTRY:-localhost}/proptech/payment-service:latest
+    build:
+      context: ../payment-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_APPLICATION_NAME=payment-service
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_INSTANCE_HOSTNAME=payment-service
+
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+
   # RabbitMQ - Message broker
   rabbitmq:
     image: rabbitmq:3-management
