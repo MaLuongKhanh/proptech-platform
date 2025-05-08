@@ -1,0 +1,59 @@
+spring:
+  main:
+    banner-mode: off
+  application:
+    name: security-service
+  config:
+    import: "configserver:"
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  cloudinary:
+    cloud:
+      name: ${CLOUDINARY_NAME}
+      api-key: ${CLOUDINARY_API_KEY}
+      api-secret: ${CLOUDINARY_API_SECRET}
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
+      username: configuser
+      password: configpassword
+      fail-fast: false
+      retry:
+        max-attempts: 10
+        initial-interval: 3000
+        max-interval: 10000
+        multiplier: 2
+      profile: ${SPRING_PROFILES_ACTIVE:local}
+    # Cấu hình OpenFeign timeout
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
+
+# Cấu hình cho SpringDoc OpenAPI (Swagger)
+springdoc:
+  api-docs:
+    path: /v3/api-docs/security-service
+    enabled: true
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    disable-swagger-default-url: true
+  packages-to-scan: vn.proptech.security.api
+  group-configs:
+    - group: user-api
+      paths-to-match: /api/users/**
+      display-name: User APIs
+    - group: role-api
+      paths-to-match: /api/roles/**
+      display-name: Role APIs
+    - group: auth-api
+      paths-to-match: /api/auths/**
+      display-name: Auth APIs

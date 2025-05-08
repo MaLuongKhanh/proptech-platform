@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import vn.proptech.listing.application.dto.Input.AddListingRequest;
 import vn.proptech.listing.application.dto.Input.GetListingRequest;
 import vn.proptech.listing.application.dto.Input.UpdateListingRequest;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @RequestMapping("/api/listings/listings")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Listing", description = "Listing management APIs")
 public class ListingController {
     
     private final ListingService listingService;

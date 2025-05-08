@@ -3,6 +3,10 @@ package vn.proptech.sale.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import vn.proptech.sale.api.client.ListingServiceClient;
+import vn.proptech.sale.api.client.dto.ApiResponse;
+import vn.proptech.sale.api.client.dto.GetListingResponse;
 import vn.proptech.sale.application.dto.input.AddTransactionRequest;
 import vn.proptech.sale.application.dto.input.GetTransactionRequest;
 import vn.proptech.sale.application.dto.input.UpdateTransactionRequest;
@@ -11,9 +15,6 @@ import vn.proptech.sale.application.mapper.input.AddTransactionRequestMapper;
 import vn.proptech.sale.application.mapper.output.GetTransactionResponseMapper;
 import vn.proptech.sale.domain.model.Transaction;
 import vn.proptech.sale.domain.repository.TransactionRepository;
-import vn.proptech.sale.infrastructure.client.ListingServiceClient;
-import vn.proptech.sale.infrastructure.client.dto.ApiResponse;
-import vn.proptech.sale.infrastructure.client.dto.GetListingResponse;
 import vn.proptech.sale.infrastructure.messaging.TransactionEventPublisher;
 
 import java.time.Instant;

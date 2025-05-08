@@ -6,6 +6,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import vn.proptech.listing.api.client.SecurityServiceClient;
+import vn.proptech.listing.api.client.dto.ApiResponse;
+import vn.proptech.listing.api.client.dto.GetUserResponse;
 import vn.proptech.listing.application.dto.Input.AddListingRequest;
 import vn.proptech.listing.application.dto.Input.GetListingRequest;
 import vn.proptech.listing.application.dto.Input.UpdateListingRequest;
@@ -33,6 +37,7 @@ public class ListingServiceImpl implements ListingService {
     private final ListingRepository listingRepository;
     private final ListingEventPublisher eventPublisher;
     private final PropertyService propertyService;
+    private final SecurityServiceClient securityServiceClient;
     private final Cloudinary cloudinary;
 
     @Override
@@ -72,7 +77,35 @@ public class ListingServiceImpl implements ListingService {
                     imageUrls,
                     newId
             );
+            
+            // Add agent information from agent id
+            if (addListingRequest.getAgentId() != null) {
+                String agentId = addListingRequest.getAgentId();
+                log.info("Fetching agent information for agent ID: {}", agentId);
+                ApiResponse<GetUserResponse> response = securityServiceClient.getUserById(agentId);
+                log.info("Response: {}", response);
+                
+                if (response != null && response.getData() != null) {
+                    GetUserResponse user = response.getData();
+                    log.info("User found: {}", user);
+                    
+                    if (user != null) {
+                        listing.setAgentName(user.getFullName());
+                        log.info("Set agent name to: {}", listing.getAgentName());
+                        listing.setAgentPhone(user.getPhoneNumber());
+                        log.info("Set agent phone to: {}", listing.getAgentPhone());
+                        listing.setAgentEmail(user.getEmail());
+                        log.info("Set agent email to: {}", listing.getAgentEmail());
+                    } else {
+                        log.warn("User data is null for agent ID: {}", agentId);
+                    }
+                } else {
+                    log.warn("Response or response data is null for agent ID: {}", agentId);
+                }
+            }
+
             listing.setActive(true);
+            
             listing.setSold(false);
 
             // Save to repository

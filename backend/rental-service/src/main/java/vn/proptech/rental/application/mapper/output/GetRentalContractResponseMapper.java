@@ -17,6 +17,8 @@ public class GetRentalContractResponseMapper {
             .fileUrl(contract.getFileUrl())
             .uploadBy(contract.getUploadBy())
             .fileName(contract.getFileName())
+            .isActive(contract.isActive())
+            .createdAt(contract.getCreatedAt())
             .build();
     }
 

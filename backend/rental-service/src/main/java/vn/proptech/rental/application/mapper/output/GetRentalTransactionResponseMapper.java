@@ -21,6 +21,7 @@ public class GetRentalTransactionResponseMapper {
                 .status(transaction.getStatus())
                 .createdAt(transaction.getCreatedAt())
                 .updatedAt(transaction.getUpdatedAt())
+                .isActive(transaction.isActive())
                 .build();
     }
 }

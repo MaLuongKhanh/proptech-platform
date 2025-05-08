@@ -50,6 +50,12 @@
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
 
+        <!-- OpenFeign cho gọi service bên ngoài -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
         <!-- SpringDoc OpenAPI (Swagger) -->
         <dependency>
             <groupId>org.springdoc</groupId>

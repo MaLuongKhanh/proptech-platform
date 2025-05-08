@@ -30,7 +30,13 @@ public class WalletServiceImpl implements WalletService {
         try {
             String newId = UUID.randomUUID().toString();
             // Check if wallet already exists for user
-            if (this.getWalletByUserId(request.getUserId()) == null) {
+            GetWalletResponse existingWallet = null;
+            try {
+                existingWallet = this.getWalletByUserId(request.getUserId());
+            } catch (RuntimeException e) {
+                // Ignore error, wallet doesn't exist which is what we want
+            }
+            if (existingWallet != null) {
                 throw new Exception("Wallet for this user already exists");
             }
 
@@ -43,6 +49,8 @@ public class WalletServiceImpl implements WalletService {
             wallet.setActive(true);
 
             wallet.setCreatedAt(Instant.now());
+
+            wallet.setUpdatedAt(Instant.now());
 
             Wallet savedWallet = walletRepository.save(wallet);
 
@@ -86,6 +94,8 @@ public class WalletServiceImpl implements WalletService {
             }
             existingWallet.setActive(true);
 
+            existingWallet.setUpdatedAt(Instant.now());
+
             Wallet updatedWallet = walletRepository.save(existingWallet);
 
             eventPublisher.publishWalletUpdatedEvent(updatedWallet);
@@ -104,6 +114,8 @@ public class WalletServiceImpl implements WalletService {
                 throw new RuntimeException("Wallet not found with ID: " + id);
             }
             existingWallet.setBalance(existingWallet.getBalance().add(new BigDecimal(amount)));
+
+            existingWallet.setUpdatedAt(Instant.now());
 
             Wallet updatedWallet = walletRepository.save(existingWallet);
 
@@ -127,6 +139,8 @@ public class WalletServiceImpl implements WalletService {
             }
             existingWallet.setBalance(existingWallet.getBalance().subtract(new BigDecimal(amount)));
 
+            existingWallet.setUpdatedAt(Instant.now());
+
             Wallet updatedWallet = walletRepository.save(existingWallet);
 
             eventPublisher.publishWalletUpdatedEvent(updatedWallet);
@@ -145,6 +159,8 @@ public class WalletServiceImpl implements WalletService {
                 throw new RuntimeException("Wallet not found with ID: " + id);
             }
             existingWallet.setActive(false);
+
+            existingWallet.setUpdatedAt(Instant.now());
 
             Wallet updatedWallet = walletRepository.save(existingWallet);
 

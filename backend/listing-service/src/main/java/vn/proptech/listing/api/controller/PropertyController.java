@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import vn.proptech.listing.application.dto.Input.AddPropertyRequest;
 import vn.proptech.listing.application.dto.Input.GetPropertyRequest;
 import vn.proptech.listing.application.dto.Input.UpdatePropertyRequest;
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequestMapping("/api/listings/properties")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Property", description = "Property management APIs")
 public class PropertyController {
     
     private final PropertyService propertyService;

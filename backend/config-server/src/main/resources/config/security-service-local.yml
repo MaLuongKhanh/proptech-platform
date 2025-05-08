@@ -1,0 +1,67 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: security-service
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/proptech_security}
+      auto-index-creation: true
+
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+security:
+  jwt:
+    secret: ${JWT_SECRET:nBSIOJEfC4K+P1qYu3cR2MLxTvZg8kQhG7jWvU0mYlL9sZpA6oXxDnFeT7hWrVbS}
+    accessTokenExpiration: ${JWT_ACCESS_TOKEN_EXPIRATION:3600000}
+    refreshTokenExpiration: ${JWT_REFRESH_TOKEN_EXPIRATION:86400000}
+    issuer: proptech.vn
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+
+logging:
+  level:
+    root: INFO
+    vn.proptech: DEBUG
+    org.springframework.data.mongodb: INFO
+    org.springframework.amqp.rabbit: INFO
+
+# Application specific properties
+
+user:
+  rabbitmq:
+    exchange: proptech.user
+    queues:
+      user-created: user.created
+      user-updated: user.updated
+      user-deleted: user.deleted
+    routing-keys:
+      user-created: user.created
+      user-updated: user.updated
+      user-deleted: user.deleted

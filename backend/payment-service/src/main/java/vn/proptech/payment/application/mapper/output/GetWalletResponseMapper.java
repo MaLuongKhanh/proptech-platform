@@ -16,6 +16,9 @@ public class GetWalletResponseMapper {
             .userId(wallet.getUserId())
             .balance(wallet.getBalance())
             .currency(wallet.getCurrency())
+            .isActive(wallet.isActive())
+            .createdAt(wallet.getCreatedAt())
+            .updatedAt(wallet.getUpdatedAt())
             .build();
     }
 

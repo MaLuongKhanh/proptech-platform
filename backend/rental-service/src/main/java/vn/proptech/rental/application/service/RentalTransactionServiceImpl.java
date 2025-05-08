@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import vn.proptech.rental.api.client.ListingServiceClient;
+import vn.proptech.rental.api.client.dto.ApiResponse;
+import vn.proptech.rental.api.client.dto.GetListingResponse;
 import vn.proptech.rental.application.dto.input.AddRentalTransactionRequest;
 import vn.proptech.rental.application.dto.input.GetRentalTransactionRequest;
 import vn.proptech.rental.application.dto.input.UpdateRentalTransactionRequest;
@@ -12,9 +15,6 @@ import vn.proptech.rental.application.mapper.input.AddRentalTransactionRequestMa
 import vn.proptech.rental.application.mapper.output.GetRentalTransactionResponseMapper;
 import vn.proptech.rental.domain.model.RentalTransaction;
 import vn.proptech.rental.domain.repository.RentalTransactionRepository;
-import vn.proptech.rental.infrastructure.client.ListingServiceClient;
-import vn.proptech.rental.infrastructure.client.dto.ApiResponse;
-import vn.proptech.rental.infrastructure.client.dto.GetListingResponse;
 import vn.proptech.rental.infrastructure.messaging.RentalTransactionEventPublisher;
 
 import java.time.Instant;

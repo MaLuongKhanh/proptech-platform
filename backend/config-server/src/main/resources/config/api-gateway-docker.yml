@@ -34,7 +34,7 @@ spring:
         - id: security-service
           uri: lb://security-service
           predicates:
-            - Path=/api/auth/**,/api/users/**
+            - Path=/api/securities/**
 
 eureka:
   client:
@@ -63,5 +63,10 @@ management:
 logging:
   level:
     root: INFO
-    org.springframework.cloud.gateway: INFO
-    org.springframework.cloud.config: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web.server.adapter.HttpWebHandlerAdapter: DEBUG
+    vn.proptech.gateway: DEBUG
+
+security:
+  jwt:
+    secret: nBSIOJEfC4K+P1qYu3cR2MLxTvZg8kQhG7jWvU0mYlL9sZpA6oXxDnFeT7hWrVbS

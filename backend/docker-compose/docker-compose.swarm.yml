@@ -105,6 +105,17 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES[2].URI=http://rental-service:8085
       - SPRING_CLOUD_GATEWAY_ROUTES[2].PREDICATES[0]=Path=/api/rentals/**
       - SPRING_CLOUD_GATEWAY_ROUTES[2].FILTERS[0]=StripPrefix=0
+
+      - SPRING_CLOUD_GATEWAY_ROUTES[3].ID=security-service-all-apis
+      - SPRING_CLOUD_GATEWAY_ROUTES[3].URI=http://security-service:8082
+      - SPRING_CLOUD_GATEWAY_ROUTES[3].PREDICATES[0]=Path=/api/securities/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[3].FILTERS[0]=StripPrefix=0
+
+      - SPRING_CLOUD_GATEWAY_ROUTES[4].ID=payment-service-all-apis
+      - SPRING_CLOUD_GATEWAY_ROUTES[4].URI=http://payment-service:8083
+      - SPRING_CLOUD_GATEWAY_ROUTES[4].PREDICATES[0]=Path=/api/payments/**
+      - SPRING_CLOUD_GATEWAY_ROUTES[4].FILTERS[0]=StripPrefix=0
+      
       # Cấu hình để chờ Discovery Server và Config Server
       - SPRING_CLOUD_CONFIG_FAIL_FAST=true
       - SPRING_CLOUD_CONFIG_RETRY_INITIAL_INTERVAL=3000
@@ -276,6 +287,40 @@ services:
         limits:
           cpus: '0.5'
           memory: 768M
+
+  # Security Service - Service quản lý người dùng và xác thực
+  security-service:
+    image: ${REGISTRY:-localhost}/proptech/security-service:latest
+    build:
+      context: ../security-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - CONFIG_SERVER_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+      - SPRING_APPLICATION_NAME=security-service
+      - EUREKA_INSTANCE_PREFERIPADDRESS=false
+      - EUREKA_INSTANCE_HOSTNAME=security-service
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 768M
+
 
   # RabbitMQ - Message broker
   rabbitmq:

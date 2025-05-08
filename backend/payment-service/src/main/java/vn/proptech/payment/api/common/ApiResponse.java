@@ -12,12 +12,12 @@ import org.springframework.http.ResponseEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiResponse<T> {
-    private String msg;
+    private String message;
     private T data;
     
     public static <T> ApiResponse<T> of(String message, T data) {
         return ApiResponse.<T>builder()
-                .msg(message)
+                .message(message)
                 .data(data)
                 .build();
     }

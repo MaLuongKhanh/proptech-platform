@@ -14,7 +14,9 @@ public class AddRentalTransactionRequestMapper {
                 .tenantIdentity(request.getTenantIdentity())
                 .price(request.getPrice())
                 .agentId(request.getAgentId())
-                .status(RentalTransactionStatus.PENDING)
+                .status(request.getStatus() == null ? RentalTransactionStatus.PENDING : request.getStatus())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .build();
     }
 }
