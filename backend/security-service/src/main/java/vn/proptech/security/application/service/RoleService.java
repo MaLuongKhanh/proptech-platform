@@ -4,7 +4,6 @@ import vn.proptech.security.domain.model.Role;
 import vn.proptech.security.domain.model.Permission;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public interface RoleService {

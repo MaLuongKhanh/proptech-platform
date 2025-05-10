@@ -33,6 +33,7 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         "/api/securities/auth/register",
         "/api/securities/auth/refresh",
         "/api/securities/users/register",
+        "/api/listings/listings",
         "/v3/api-docs",
         "/swagger-ui"
     );

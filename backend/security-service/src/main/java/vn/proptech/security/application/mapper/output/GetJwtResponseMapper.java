@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class GetJwtResponseMapper {
     
     public static GetJwtResponse toGetJwtResponse(String accessToken, String refreshToken, 
-                                                  UserDetails userDetails, String id, String email, String fullName) {
+                                                  UserDetails userDetails, String id, String avatarUrl, String fullName) {
         if (userDetails == null) {
             return null;
         }
@@ -23,9 +23,8 @@ public class GetJwtResponseMapper {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .id(id)
-                .username(userDetails.getUsername())
-                .email(email)
                 .fullName(fullName)
+                .avatarUrl(avatarUrl)
                 .roles(roles)
                 .build();
     }

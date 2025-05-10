@@ -72,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
                 refreshToken, 
                 userDetails,
                 user.getId(),
-                user.getEmail(),
+                user.getAvatarUrl(),
                 user.getFullName()
         );
     }
@@ -101,7 +101,7 @@ public class AuthServiceImpl implements AuthService {
         
         // Assign default ROLE_USER role
         HashSet<String> roles = new HashSet<>();
-        roles.add("ROLE_USER");
+        roles.add("USER");
         user.setRoles(roles);
 
         User savedUser = userRepository.save(user);

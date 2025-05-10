@@ -14,10 +14,8 @@ import java.util.List;
 public class GetJwtResponse {
     private String accessToken;
     private String refreshToken;
-    private String tokenType;
     private String id;
-    private String username;
-    private String email;
     private String fullName;
+    private String avatarUrl;
     private List<String> roles;
 }

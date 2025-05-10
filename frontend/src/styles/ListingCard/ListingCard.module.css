@@ -1,0 +1,40 @@
+.cardMediaBox {
+  position: relative;
+}
+
+.cardMedia {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px 8px 0 0;
+}
+
+.favoriteBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  z-index: 2;
+  transition: box-shadow 0.2s;
+}
+.favoriteBtn:hover {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.chip {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+}
+
+.cardContent {
+  padding-bottom: 16px !important;
+}
+
+.infoRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+} 

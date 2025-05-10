@@ -1,0 +1,73 @@
+.authContainer {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 900px) {
+  .authContainer {
+    flex-direction: row;
+  }
+}
+
+.formBox {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.formInner {
+  width: 100%;
+  max-width: 380px;
+}
+
+.logo {
+  height: 70px;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-weight: 700 !important;
+  margin-bottom: 16px;
+  font-size: 1.5rem !important;
+}
+
+.submitBtn {
+  margin-top: 16px !important;
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  border-radius: 12px !important;
+}
+
+.socialBtn {
+  margin-top: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  text-transform: none !important;
+}
+
+.socialBtn:hover {
+  background-color: #f0f0f0 !important;
+}
+
+.divider {
+  margin: 24px 0;
+}
+
+.rightImage {
+  flex: 1.2;
+  display: none;
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+}
+@media (min-width: 900px) {
+  .rightImage {
+    display: block;
+  }
+} 
