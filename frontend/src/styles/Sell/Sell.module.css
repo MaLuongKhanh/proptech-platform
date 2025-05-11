@@ -1,0 +1,174 @@
+.heroSection {
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding: 6rem 0;
+  color: white;
+  text-align: center;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.searchContainer {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 600px !important;
+  margin: 0 auto !important;
+  position: relative !important;
+}
+
+.searchButton {
+  margin-top: 10px !important;
+  width: 100% !important;
+  padding: 12px !important;
+  font-weight: 600 !important;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.sectionTitle {
+  font-weight: 700;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.sectionTitle:after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  width: 60px;
+  height: 3px;
+  background-color: #1A73E8;
+  transform: translateX(-50%);
+}
+
+.stepCard {
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.stepCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stepNumber {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #1A73E8;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin-right: 1rem;
+}
+
+.optionCard {
+  border-radius: 8px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.optionCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.ctaButton {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 50px;
+}
+
+.featureIcon {
+  font-size: 2.5rem;
+  color: #1A73E8;
+  margin-bottom: 1rem;
+}
+
+.checkIcon {
+  color: #34A853;
+  margin-right: 0.5rem;
+}
+
+.optionsHeader {
+  margin-bottom: 24px;
+}
+
+.compareCard {
+  padding: 24px;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.compareCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.mobileIconContainer {
+  background-color: #f0f6ff;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 16px;
+}
+
+.mobileIcon {
+  width: 30px;
+  height: 30px;
+}
+
+.optionButton {
+  margin-top: 16px;
+}
+
+.compareOptions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 32px;
+}
+
+.traditionallySection {
+  padding: 16px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #eaeaea;
+  height: 100%;
+}

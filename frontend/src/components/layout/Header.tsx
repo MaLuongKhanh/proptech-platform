@@ -26,7 +26,7 @@ const menuItems = [
   { label: 'Buy', path: '/listings?type=SALE' },
   { label: 'Rent', path: '/listings?type=RENT' },
   { label: 'Sell', path: '/sell' },
-  { label: 'Find an Agent', path: '/agents' },
+  { label: 'Find an Agent', path: '/find-agent' },
 ];
 
 export const Header: React.FC = () => {
