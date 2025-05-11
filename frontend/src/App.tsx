@@ -14,7 +14,7 @@ import { Home } from './pages/Home';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
 import { Profile } from './pages/Profile';
-
+import { ListingPage } from './pages/Listing/ListingPage';
 function AppContent() {
   const location = useLocation();
   const hideLayout = ['/login', '/register'].includes(location.pathname);
@@ -27,6 +27,7 @@ function AppContent() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/listings" element={<ListingPage />} />
         </Routes>
       </main>
       {!hideLayout && <Footer />}

@@ -37,10 +37,9 @@ class AuthService {
   async login(data: LoginRequest): Promise<JwtResponse | null> {
     try {
       const response = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, data);
-      const { accessToken, refreshToken, tokenType, ...user } = response.data.data;
+      const { accessToken, refreshToken, ...user } = response.data.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('tokenType', tokenType || '');
       localStorage.setItem('user', JSON.stringify(user));
       return response.data.data;
     } catch (error) {

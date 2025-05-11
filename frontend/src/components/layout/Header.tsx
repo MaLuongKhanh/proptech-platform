@@ -23,8 +23,8 @@ import type { RootState } from '../../store/store';
 import logo from '../../assets/images/Proptech-logo.png';
 
 const menuItems = [
-  { label: 'Buy', path: '/buy' },
-  { label: 'Rent', path: '/rent' },
+  { label: 'Buy', path: '/listings?type=SALE' },
+  { label: 'Rent', path: '/listings?type=RENT' },
   { label: 'Sell', path: '/sell' },
   { label: 'Find an Agent', path: '/agents' },
 ];

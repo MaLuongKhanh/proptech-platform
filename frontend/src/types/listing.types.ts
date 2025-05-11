@@ -1,4 +1,4 @@
-import { Property } from './property.types';
+import { Property, PropertyType } from './property.types';
 
 export interface Listing {
   id: string;
@@ -30,9 +30,8 @@ export interface ListingSearchParams {
   sort?: string;
   direction?: 'ASC' | 'DESC';
   listingType?: 'SALE' | 'RENT';
-  propertyType?: 'HOUSE' | 'APARTMENT' | 'CONDO' | 'TOWNHOUSE' | 'LAND' | 'COMMERCIAL';
-  city?: string;
-  district?: string;
+  propertyType?: PropertyType;
+  address?: string;
   minPrice?: number;
   maxPrice?: number;
   minArea?: number;

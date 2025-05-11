@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Container,
@@ -26,6 +26,7 @@ import useWindowSize from '../../hooks/useWindowSize';
 import { listingService} from '../../services/listing.service';
 import styles from '../../styles/Home/Home.module.css';
 import { Listing } from '../../types/listing.types';
+import ListingDetailDialog from '../../components/features/ListingDetailDialog';
 
 // Import images
 import buyImage from '../../assets/images/homepage-spot-agent-lg-1.webp';
@@ -43,7 +44,7 @@ const actionCards = [
       desc: `Find your place with an immersive photo experience and the most listings, including things you won't find anywhere else.`,
       img: buyImage,
       btn: 'Browse homes',
-      onClick: (navigate: any) => navigate('/listings'),
+      onClick: (navigate: any) => navigate('/listings?type=SALE'),
     },
     {
       title: 'Sell a home',
@@ -57,7 +58,7 @@ const actionCards = [
       desc: `We're creating a seamless online experience – from shopping on the largest rental network, to applying, to paying rent.`,
       img: rentImage,
       btn: 'Find rentals',
-      onClick: () => {},
+      onClick: (navigate: any) => navigate('/listings?type=RENT'),
     },
   ];
   
@@ -70,7 +71,7 @@ const provinceListings = [
     {
       name: 'TP. Hồ Chí Minh',
       image: tpHCMImage,
-      path: '/listings?province=TP. Hồ Chí Minh',
+      path: '/listings?province=Hồ Chí Minh',
     },
     {
       name: 'Đà Nẵng',
@@ -100,6 +101,9 @@ export const Home: React.FC = () => {
   // Sử dụng useAsync để quản lý việc fetch data
   const { execute: fetchListings, data: listings, loading, error } = useAsync<Listing[]>(listingService.getAll);
 
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   React.useEffect(() => {
     fetchListings();
   }, [fetchListings]);
@@ -115,6 +119,16 @@ export const Home: React.FC = () => {
     setFavoriteIds((prev) =>
       prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
     );
+  };
+
+  const handleOpenDetail = (listing: Listing) => {
+    setSelectedListing(listing);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDetail = () => {
+    setDialogOpen(false);
+    setSelectedListing(null);
   };
 
   return (
@@ -312,12 +326,15 @@ export const Home: React.FC = () => {
                       listing={listing}
                       onFavorite={handleFavorite}
                       isFavorite={favoriteIds.includes(listing.id)}
+                      onClick={() => handleOpenDetail(listing)}
                     />
                   </SwiperSlide>
                 ))}
           </Swiper>
         </Box>
       </Container>
+
+      <ListingDetailDialog open={dialogOpen} onClose={handleCloseDetail} listing={selectedListing} />
     </Box>
   );
 }; 

@@ -19,12 +19,14 @@ interface ListingCardProps {
   listing: any;
   onFavorite: (id: string) => void;
   isFavorite?: boolean;
+  onClick?: () => void;
 }
 
 export const ListingCard: React.FC<ListingCardProps> = ({
   listing,
   onFavorite,
   isFavorite = false,
+  onClick,
 }) => {
   const {
     id,
@@ -45,7 +47,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
   const imageList = images && images.length > 0 ? images : [featuredImageUrl];
 
   return (
-    <Card className={styles.cardRoot}>
+    <Card className={styles.cardRoot} onClick={onClick} style={{ cursor: onClick ? 'pointer' : undefined }}>
       <Box className={styles.cardMediaBox} sx={{ position: 'relative' }}>
         <Swiper spaceBetween={10} slidesPerView={1} style={{ borderRadius: 8 }}>
           {imageList.map((img: string, idx: number) => (
@@ -68,7 +70,10 @@ export const ListingCard: React.FC<ListingCardProps> = ({
         />
         <IconButton
           className={styles.favoriteBtn}
-          onClick={() => onFavorite(id)}
+          onClick={(event) => {
+            event.stopPropagation();
+            onFavorite(id);
+          }}
           sx={{ position: 'absolute', top: 12, right: 12, zIndex: 2 }}
         >
           {isFavorite ? (

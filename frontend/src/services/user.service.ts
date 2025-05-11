@@ -7,20 +7,20 @@ import {
 } from '../types/user.types';
 
 class UserService {
-  async getAll(): Promise<User[]> {
+  async getAll(): Promise<User | null> {
     try {
       const response = await api.get<UserResponse>(API_ENDPOINTS.USER.BASE);
       return response.data.data;
     } catch (error) {
       console.error('Error getting all users:', error);
-      return [];
+      return null;
     }
   }
 
   async getById(id: string): Promise<User | null> {
     try {
       const response = await api.get<UserResponse>(API_ENDPOINTS.USER.BY_ID(id));
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       console.error('Error getting user by id:', error);
       return null;
@@ -30,7 +30,7 @@ class UserService {
   async getByUsername(username: string): Promise<User | null> {
     try {
       const response = await api.get<UserResponse>(API_ENDPOINTS.USER.BY_USERNAME(username));
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       console.error('Error getting user by username:', error);
       return null;
@@ -40,7 +40,7 @@ class UserService {
   async update(id: string, data: UpdateUserRequest): Promise<User | null> {
     try {
       const response = await api.put<UserResponse>(API_ENDPOINTS.USER.BY_ID(id), data);
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       console.error('Error updating user:', error);
       return null;
