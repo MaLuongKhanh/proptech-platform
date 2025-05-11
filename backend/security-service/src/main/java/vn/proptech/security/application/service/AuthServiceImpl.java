@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +23,7 @@ import vn.proptech.security.domain.repository.UserRepository;
 import vn.proptech.security.exception.GlobalExceptionHandler.ResourceNotFoundException;
 import vn.proptech.security.infrastructure.messaging.UserEventPublisher;
 import vn.proptech.security.infrastructure.security.JwtTokenProvider;
+import vn.proptech.security.application.service.UserServiceImpl;
 
 import java.security.SecureRandom;
 import java.time.Instant;
@@ -30,6 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,6 +47,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final UserEventPublisher userEventPublisher;
+    private final UserServiceImpl userService;
 
     @Override
     public GetJwtResponse authenticateUser(LoginRequest loginRequest) {
@@ -121,33 +125,34 @@ public class AuthServiceImpl implements AuthService {
         String username = jwtTokenProvider.getUsernameFromToken(refreshToken);
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
-
-        // Create authentication object
+        log.info("User found: {}", user.getUsername());
+        // Tạo UserDetails từ User entity
+        UserDetails userDetails = org.springframework.security.core.userdetails.User
+                .withUsername(user.getUsername())
+                .password(user.getPassword())
+                .authorities(user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList()))
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .disabled(false)
+                .build();
+        
+        // Tạo đối tượng Authentication từ UserDetails
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                username,
-                null
-        );
-
-        // Generate new tokens
+                userDetails, null, userDetails.getAuthorities());
+        log.info("Authentication object created: {}", authentication);
+        // Generate new tokens với đối tượng Authentication
         String newAccessToken = jwtTokenProvider.generateAccessToken(authentication);
         String newRefreshToken = jwtTokenProvider.generateRefreshToken(authentication);
-
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                true,
-                true,
-                true,
-                true,
-                authentication.getAuthorities()
-        );
-
+        log.info("New tokens generated: AccessToken: {}, RefreshToken: {}", newAccessToken, newRefreshToken);
         return GetJwtResponseMapper.toGetJwtResponse(
                 newAccessToken,
                 newRefreshToken,
                 userDetails,
                 user.getId(),
-                user.getEmail(),
+                user.getAvatarUrl(),
                 user.getFullName()
         );
     }
