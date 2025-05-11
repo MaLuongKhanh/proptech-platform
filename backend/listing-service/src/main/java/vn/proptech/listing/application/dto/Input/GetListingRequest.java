@@ -20,8 +20,7 @@ public class GetListingRequest {
     public String direction;
     public ListingType listingType;
     public PropertyType propertyType;
-    public String city;
-    public String district;
+    public String address;
     public Double minPrice;
     public Double maxPrice;
     public Double minArea;

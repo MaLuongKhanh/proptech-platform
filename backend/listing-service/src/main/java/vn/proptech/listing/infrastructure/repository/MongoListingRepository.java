@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import vn.proptech.listing.domain.model.Listing;
 import vn.proptech.listing.domain.model.ListingType;
-import vn.proptech.listing.domain.model.PropertyType;
 import vn.proptech.listing.domain.repository.ListingRepository;
 
 import java.util.ArrayList;
@@ -58,9 +57,6 @@ public class MongoListingRepository implements ListingRepository {
     @Override
     public List<Listing> search(
             ListingType listingType,
-            PropertyType propertyType,
-            String city,
-            String district,
             Double minPrice,
             Double maxPrice,
             Integer minBedrooms,
@@ -68,19 +64,18 @@ public class MongoListingRepository implements ListingRepository {
             Double minArea,
             Double maxArea,
             Integer limit,
-            Integer offset) {
+            Integer offset,
+            List<String> propertyIds) {
         
         Query query = buildSearchQuery(
                 listingType,
-                propertyType,
-                city,
-                district,
                 minPrice,
                 maxPrice,
                 minBedrooms,
                 maxBedrooms,
                 minArea,
-                maxArea
+                maxArea,
+                propertyIds
         );
         
         // Default to 10 items per page if not specified
@@ -95,27 +90,23 @@ public class MongoListingRepository implements ListingRepository {
     @Override
     public long countSearchResults(
             ListingType listingType,
-            PropertyType propertyType,
-            String city,
-            String district,
             Double minPrice,
             Double maxPrice,
             Integer minBedrooms,
             Integer maxBedrooms,
             Double minArea,
-            Double maxArea) {
+            Double maxArea,
+            List<String> propertyIds) {
         
         Query query = buildSearchQuery(
                 listingType,
-                propertyType,
-                city,
-                district,
                 minPrice,
                 maxPrice,
                 minBedrooms,
                 maxBedrooms,
                 minArea,
-                maxArea
+                maxArea,
+                propertyIds
         );
         
         return mongoTemplate.count(query, Listing.class);
@@ -155,15 +146,13 @@ public class MongoListingRepository implements ListingRepository {
 
     private Query buildSearchQuery(
             ListingType listingType,
-            PropertyType propertyType,
-            String city,
-            String district,
             Double minPrice,
             Double maxPrice,
             Integer minBedrooms,
             Integer maxBedrooms,
             Double minArea,
-            Double maxArea) {
+            Double maxArea,
+            List<String> propertyIds) {
         
         List<Criteria> criteriaList = new ArrayList<>();
         
@@ -174,20 +163,7 @@ public class MongoListingRepository implements ListingRepository {
         if (listingType != null) {
             criteriaList.add(Criteria.where("listingType").is(listingType));
         }
-        
-        if (propertyType != null) {
-            criteriaList.add(Criteria.where("propertyType").is(propertyType));
-        }
-        
-        // Tìm kiếm địa điểm với regex không phân biệt chữ hoa/thường
-        if (city != null && !city.trim().isEmpty()) {
-            criteriaList.add(Criteria.where("address.city").regex(city.trim(), "i"));
-        }
-        
-        if (district != null && !district.trim().isEmpty()) {
-            criteriaList.add(Criteria.where("address.district").regex(district.trim(), "i"));
-        }
-        
+
         // Xử lý giá (price)
         handleMinMaxRange(criteriaList, "price", minPrice, maxPrice);
         
@@ -196,6 +172,11 @@ public class MongoListingRepository implements ListingRepository {
         
         // Xử lý diện tích (area)
         handleMinMaxRange(criteriaList, "area", minArea, maxArea);
+
+        // Xử lý danh sách propertyIds
+        if (propertyIds != null && !propertyIds.isEmpty()) {
+            criteriaList.add(Criteria.where("propertyId").in(propertyIds));
+        }
         
         // Tạo query với các tiêu chí đã được thêm vào
         Query query = new Query();

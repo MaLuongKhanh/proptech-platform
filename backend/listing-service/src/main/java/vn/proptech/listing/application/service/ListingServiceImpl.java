@@ -312,12 +312,22 @@ public class ListingServiceImpl implements ListingService {
     
         // Tìm kiếm danh sách
         int offset = page > 0 ? (page - 1) * size : 0;
+
+        List<String> propertyIds = new ArrayList<>();
         
+        if (request.getAddress() != null && !request.getAddress().trim().isEmpty()) {
+            List<GetPropertyResponse> properties = propertyService.findPropertiesByAddressKeyword(request.getAddress());
+            if (properties.isEmpty()) {
+                return new ArrayList<>();
+            }
+            propertyIds = properties.stream()
+                .map(GetPropertyResponse::getPropertyId)
+                .collect(Collectors.toList());
+            
+        }
+
         List<Listing> listings = listingRepository.search(
                 request.getListingType(),
-                request.getPropertyType(),
-                request.getCity(),
-                request.getDistrict(),
                 request.getMinPrice(),
                 request.getMaxPrice(),
                 request.getMinBedrooms(),
@@ -325,7 +335,8 @@ public class ListingServiceImpl implements ListingService {
                 request.getMinArea(),
                 request.getMaxArea(),
                 size,
-                offset
+                offset,
+                propertyIds
         );
         log.info("Found {} listings matching criteria", listings.size());
         
@@ -337,17 +348,28 @@ public class ListingServiceImpl implements ListingService {
 
     @Override
     public long countSearchResults(GetListingRequest request) {
+        List<String> propertyIds = new ArrayList<>();
+        
+        if (request.getAddress() != null && !request.getAddress().trim().isEmpty()) {
+            List<GetPropertyResponse> properties = propertyService.findPropertiesByAddressKeyword(request.getAddress());
+            if (properties.isEmpty()) {
+                return 0;
+            }
+            propertyIds = properties.stream()
+                .map(GetPropertyResponse::getPropertyId)
+                .collect(Collectors.toList());
+            
+        }
+        
         return listingRepository.countSearchResults(
                 request.getListingType(),
-                request.getPropertyType(),
-                request.getCity(),
-                request.getDistrict(),
                 request.getMinPrice(),
                 request.getMaxPrice(),
                 request.getMinBedrooms(),
                 request.getMaxBedrooms(),
                 request.getMinArea(),
-                request.getMaxArea()
+                request.getMaxArea(),
+                propertyIds
         );
     }
     

@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL) // Bỏ qua các trường null khi serialize
 public class GetAddressResponse {
     public String street;
-    public String district;
     public String city;
     public String province;
     public String country;

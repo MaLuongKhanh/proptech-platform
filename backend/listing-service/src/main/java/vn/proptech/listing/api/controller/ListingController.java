@@ -82,8 +82,7 @@ public class ListingController {
             @RequestParam(required = false) String direction,
             @RequestParam(required = false) String listingType,
             @RequestParam(required = false) String propertyType,
-            @RequestParam(required = false) String city,
-            @RequestParam(required = false) String district,
+            @RequestParam(required = false) String address,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minArea,
@@ -102,9 +101,7 @@ public class ListingController {
             .sort(sort)
             .direction(direction)
             .listingType(listingType != null ? vn.proptech.listing.domain.model.ListingType.valueOf(listingType) : null)
-            .propertyType(propertyType != null ? vn.proptech.listing.domain.model.PropertyType.valueOf(propertyType) : null)
-            .city(city)
-            .district(district)
+            .address(address)
             .minPrice(minPrice)
             .maxPrice(maxPrice)
             .minArea(minArea)
@@ -129,8 +126,7 @@ public class ListingController {
             @RequestParam(required = false) String direction,
             @RequestParam(required = false) String listingType,
             @RequestParam(required = false) String propertyType,
-            @RequestParam(required = false) String city,
-            @RequestParam(required = false) String district,
+            @RequestParam(required = false) String address,
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minArea,
@@ -150,8 +146,7 @@ public class ListingController {
             .direction(direction)
             .listingType(listingType != null ? vn.proptech.listing.domain.model.ListingType.valueOf(listingType) : null)
             .propertyType(propertyType != null ? vn.proptech.listing.domain.model.PropertyType.valueOf(propertyType) : null)
-            .city(city)
-            .district(district)
+            .address(address)
             .minPrice(minPrice)
             .maxPrice(maxPrice)
             .minArea(minArea)

@@ -8,7 +8,6 @@ public class GetAddressResponseMapper {
         if (address == null) return null;
         return GetAddressResponse.builder()
                 .street(address.getStreet())
-                .district(address.getDistrict())
                 .city(address.getCity())
                 .province(address.getProvince())
                 .country(address.getCountry())
