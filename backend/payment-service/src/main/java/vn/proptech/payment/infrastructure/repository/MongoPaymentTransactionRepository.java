@@ -56,8 +56,7 @@ public class MongoPaymentTransactionRepository implements PaymentTransactionRepo
             query.addCriteria(Criteria.where("type").is(type));
         }
         if (startDate != null && endDate != null) {
-            query.addCriteria(Criteria.where("startDate").lte(startDate));
-            query.addCriteria(Criteria.where("endDate").gte(endDate));
+            query.addCriteria(Criteria.where("createdAt").gte(startDate).lte(endDate));
         }
 
         int pageSize = limit != null ? limit : 10;

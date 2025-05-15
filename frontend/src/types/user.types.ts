@@ -22,5 +22,5 @@ export interface UpdateUserRequest {
   email?: string;
   fullName?: string;
   phoneNumber?: string;
-  avatarUrl?: string;
+  avatar?: File;
 } 

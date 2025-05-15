@@ -33,6 +33,11 @@ export interface Property {
 
 export interface PropertyResponse {
   message: string;
+  data: Property;
+}
+
+export interface PropertyListResponse {
+  message: string;
   data: Property[];
 }
 

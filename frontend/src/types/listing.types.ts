@@ -21,6 +21,11 @@ export interface Listing {
 
 export interface ListingResponse {
   message: string;
+  data: Listing;
+}
+
+export interface ListingListResponse {
+  message: string;
   data: Listing[];
 }
 

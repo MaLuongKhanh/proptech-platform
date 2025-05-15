@@ -650,5 +650,3 @@ export const SellPage: React.FC = () => {
     </Box>
   );
 };
-
-export default SellPage;

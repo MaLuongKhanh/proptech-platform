@@ -3,11 +3,14 @@ package vn.proptech.payment.application.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import vn.proptech.payment.application.dto.input.AddPaymentTransactionRequest;
 import vn.proptech.payment.application.dto.input.AddWalletRequest;
 import vn.proptech.payment.application.dto.input.UpdateWalletRequest;
 import vn.proptech.payment.application.dto.output.GetWalletResponse;
 import vn.proptech.payment.application.mapper.input.AddWalletRequestMapper;
 import vn.proptech.payment.application.mapper.output.GetWalletResponseMapper;
+import vn.proptech.payment.domain.model.PaymentTransactionType;
 import vn.proptech.payment.domain.model.Wallet;
 import vn.proptech.payment.domain.repository.WalletRepository;
 import vn.proptech.payment.infrastructure.messaging.WalletEventPublisher;
@@ -23,6 +26,7 @@ public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
     private final WalletEventPublisher eventPublisher;
+    private final PaymentTransactionService paymentTransactionService;
 
     @Override
     public GetWalletResponse createWallet(AddWalletRequest request) {
@@ -121,6 +125,14 @@ public class WalletServiceImpl implements WalletService {
 
             eventPublisher.publishWalletUpdatedEvent(updatedWallet);
 
+            // Create transaction record
+            AddPaymentTransactionRequest transactionRequest = new AddPaymentTransactionRequest();
+            transactionRequest.setWalletId(id);
+            transactionRequest.setAmount(new BigDecimal(amount));
+            transactionRequest.setDescription("Top-up");
+            transactionRequest.setType(PaymentTransactionType.TOPUP);
+            paymentTransactionService.createPaymentTransaction(transactionRequest);
+
             return GetWalletResponseMapper.GetWalletMapEntityToDTO(updatedWallet);
         } catch (Exception e) {
             log.error("Error topping up wallet: {}", e.getMessage(), e);
@@ -144,6 +156,14 @@ public class WalletServiceImpl implements WalletService {
             Wallet updatedWallet = walletRepository.save(existingWallet);
 
             eventPublisher.publishWalletUpdatedEvent(updatedWallet);
+
+            // Create transaction record
+            AddPaymentTransactionRequest transactionRequest = new AddPaymentTransactionRequest();
+            transactionRequest.setWalletId(id);
+            transactionRequest.setAmount(new BigDecimal(amount));
+            transactionRequest.setDescription("Payment");
+            transactionRequest.setType(PaymentTransactionType.SERVICE_PAYMENT);
+            paymentTransactionService.createPaymentTransaction(transactionRequest);
 
             return GetWalletResponseMapper.GetWalletMapEntityToDTO(updatedWallet);
         } catch (Exception e) {

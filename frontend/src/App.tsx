@@ -13,7 +13,7 @@ import { Footer } from './components/layout/Footer';
 import { Home } from './pages/Home';
 import { Login } from './pages/Auth/Login';
 import { Register } from './pages/Auth/Register';
-import { Profile } from './pages/Profile';
+import { ProfilePage } from './pages/Profile';
 import { ListingPage } from './pages/Listing/ListingPage';
 import { SellPage } from './pages/Sell';
 import { FindAgentPage } from './pages/FindAgent';
@@ -29,7 +29,7 @@ function AppContent() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/listings" element={<ListingPage />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/find-agent" element={<FindAgentPage />} />

@@ -8,6 +8,11 @@ import {
   IconButton,
   Button,
   Skeleton,
+  List,
+  ListItem,
+  ListItemText,
+  Popper,
+  ClickAwayListener,
 } from '@mui/material';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { ListingCard } from '../../components/features/ListingCard';
@@ -37,6 +42,7 @@ import tpHCMImage from '../../assets/images/hcm-background.jpg';
 import daNangImage from '../../assets/images/danang-background.jpg';
 import haiPhongImage from '../../assets/images/haiphong-background.jpg';
 import canThoImage from '../../assets/images/cantho-background.jpg';
+import bgImage from '../../assets/images/commercial-high-rise-buildings.webp';
 
 const actionCards = [
     {
@@ -90,12 +96,80 @@ const provinceListings = [
     },
   ];
 
+const provinces = [
+  'Hà Nội',
+  'Hồ Chí Minh',
+  'Đà Nẵng',
+  'Hải Phòng',
+  'Cần Thơ',
+  'An Giang',
+  'Bà Rịa - Vũng Tàu',
+  'Bắc Giang',
+  'Bắc Kạn',
+  'Bạc Liêu',
+  'Bắc Ninh',
+  'Bến Tre',
+  'Bình Định',
+  'Bình Dương',
+  'Bình Phước',
+  'Bình Thuận',
+  'Cà Mau',
+  'Cao Bằng',
+  'Đắk Lắk',
+  'Đắk Nông',
+  'Điện Biên',
+  'Đồng Nai',
+  'Đồng Tháp',
+  'Gia Lai',
+  'Hà Giang',
+  'Hà Nam',
+  'Hà Tĩnh',
+  'Hải Dương',
+  'Hậu Giang',
+  'Hòa Bình',
+  'Hưng Yên',
+  'Khánh Hòa',
+  'Kiên Giang',
+  'Kon Tum',
+  'Lai Châu',
+  'Lâm Đồng',
+  'Lạng Sơn',
+  'Lào Cai',
+  'Long An',
+  'Nam Định',
+  'Nghệ An',
+  'Ninh Bình',
+  'Ninh Thuận',
+  'Phú Thọ',
+  'Phú Yên',
+  'Quảng Bình',
+  'Quảng Nam',
+  'Quảng Ngãi',
+  'Quảng Ninh',
+  'Quảng Trị',
+  'Sóc Trăng',
+  'Sơn La',
+  'Tây Ninh',
+  'Thái Bình',
+  'Thái Nguyên',
+  'Thanh Hóa',
+  'Thừa Thiên Huế',
+  'Tiền Giang',
+  'Trà Vinh',
+  'Tuyên Quang',
+  'Vĩnh Long',
+  'Vĩnh Phúc',
+  'Yên Bái',
+];
+
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { width } = useWindowSize();
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
   
-  const [favoriteIds, setFavoriteIds]  = React.useState<string[]>([]);
+  const [favoriteIds, setFavoriteIds] = React.useState<string[]>([]);
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
   // Sử dụng useAsync để quản lý việc fetch data
@@ -113,6 +187,34 @@ export const Home: React.FC = () => {
     if (searchTerm.trim()) {
       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
     }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    
+    if (value.trim()) {
+      const filtered = provinces.filter(province => 
+        province.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestions(filtered);
+      setAnchorEl(e.currentTarget);
+    } else {
+      setSuggestions([]);
+      setAnchorEl(null);
+    }
+  };
+
+  const handleSuggestionClick = (province: string) => {
+    setSearchTerm(province);
+    setSuggestions([]);
+    setAnchorEl(null);
+    navigate(`/listings?province=${encodeURIComponent(province)}`);
+  };
+
+  const handleClickAway = () => {
+    setSuggestions([]);
+    setAnchorEl(null);
   };
 
   const handleFavorite = (id: string) => {
@@ -138,7 +240,7 @@ export const Home: React.FC = () => {
         className={styles.heroSection}
         style={{
           backgroundImage:
-            'url(https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80)',
+            `url(${bgImage})`,
         }}
       >
         {/* Overlay */}
@@ -155,20 +257,51 @@ export const Home: React.FC = () => {
             Discover thousands of quality real estate listings
           </Typography>
 
-          <Paper
-            component="form"
-            onSubmit={handleSearch}
-            className={styles.searchForm}
-          >
-            <IconButton type="submit" sx={{ p: 1, color: '#006AFF' }} aria-label="search">
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              sx={{ ml: 1, flex: 1, fontSize: 18, pl: 1 }}
-              placeholder="Enter address, city, province..."
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Paper>
+          <ClickAwayListener onClickAway={handleClickAway}>
+            <Box sx={{ position: 'relative', width: '100%' }}>
+              <Paper
+                component="form"
+                onSubmit={handleSearch}
+                className={styles.searchForm}
+              >
+                <IconButton type="submit" sx={{ p: 1, color: '#006AFF' }} aria-label="search">
+                  <SearchIcon />
+                </IconButton>
+                <InputBase
+                  sx={{ ml: 1, flex: 1, fontSize: 18, pl: 1 }}
+                  placeholder="Enter address, city, province..."
+                  inputProps={{ 'aria-label': 'search' }}
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+              </Paper>
+              <Popper
+                open={Boolean(anchorEl) && suggestions.length > 0}
+                anchorEl={anchorEl}
+                placement="bottom-start"
+                style={{ width: anchorEl?.offsetWidth, zIndex: 1300 }}
+              >
+                <Paper elevation={3} sx={{ mt: 1, maxHeight: 300, overflow: 'auto' }}>
+                  <List>
+                    {suggestions.map((province, index) => (
+                      <ListItem
+                        key={index}
+                        button
+                        onClick={() => handleSuggestionClick(province)}
+                        sx={{
+                          '&:hover': {
+                            backgroundColor: 'rgba(0, 106, 255, 0.08)',
+                          },
+                        }}
+                      >
+                        <ListItemText primary={province} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              </Popper>
+            </Box>
+          </ClickAwayListener>
         </Container>
       </Box>
 
@@ -281,11 +414,11 @@ export const Home: React.FC = () => {
         </div>
       </Container>
 
-      {/* Newly Listed Homes */}
+      {/* Popular Listed Homes */}
       <Container maxWidth="lg" className={styles.featuredContainer}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Typography className={styles.featuredTitle} gutterBottom>
-            Newly Listed Homes
+            Popular Listed Homes
           </Typography>
           <Button 
             variant="outlined" 

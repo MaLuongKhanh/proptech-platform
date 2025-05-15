@@ -5,19 +5,20 @@ import {
   PropertyResponse,
   PropertySearchParams,
   AddPropertyRequest,
-  UpdatePropertyRequest,
+  PropertyListResponse,
+  UpdatePropertyRequest
 } from '../types/property.types';
 
 class PropertyService {
   async getAll(params?: PropertySearchParams): Promise<Property[]> {
-    const response = await api.get<PropertyResponse>(API_ENDPOINTS.PROPERTY.BASE, { params });
+    const response = await api.get<PropertyListResponse>(API_ENDPOINTS.PROPERTY.BASE, { params });
     return response.data.data;
   }
 
   async getById(id: string): Promise<Property | null> {
     try {
       const response = await api.get<PropertyResponse>(API_ENDPOINTS.PROPERTY.BY_ID(id));
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       console.error('Error fetching property:', error);
       return null;
@@ -27,7 +28,7 @@ class PropertyService {
   async create(data: AddPropertyRequest): Promise<Property | null> {
     try {
       const response = await api.post<PropertyResponse>(API_ENDPOINTS.PROPERTY.BASE, data);
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       console.error('Error creating property:', error);
       return null;
@@ -37,7 +38,7 @@ class PropertyService {
   async update(id: string, data: UpdatePropertyRequest): Promise<Property | null> {
     try {
       const response = await api.put<PropertyResponse>(API_ENDPOINTS.PROPERTY.BY_ID(id), data);
-      return response.data.data[0];
+      return response.data.data;
     } catch (error) {
       console.error('Error updating property:', error);
       return null;

@@ -7,6 +7,9 @@ import 'swiper/css';
 import 'swiper/css/autoplay';
 import { formatCurrency } from '../../utils/helpers';
 import AgentContactDialog from './AgentContactDialog';
+import { saleTransactionService } from '../../services/sale-transaction.service';
+import { rentalTransactionService } from '../../services/rental-transaction.service';
+import { useTheme } from '@mui/material';
 
 interface ListingDetailDialogProps {
   open: boolean;
@@ -82,10 +85,36 @@ const ListingDetailDialog: React.FC<ListingDetailDialogProps> = ({ open, onClose
   const swiperRef = useRef<any>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [priceHistory, setPriceHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const theme = useTheme();
 
   useEffect(() => {
     setActiveSlide(currentIndex); // Đồng bộ activeSlide với currentIndex
   }, [currentIndex]);
+
+  useEffect(() => {
+    if (!listing) return;
+    setLoadingHistory(true);
+    const fetchHistory = async () => {
+      try {
+        let data: any[] = [];
+        if (listing.listingType === 'SALE') {
+          data = await saleTransactionService.getByPropertyId(listing.propertyId);
+        } else if (listing.listingType === 'RENT') {
+          data = await rentalTransactionService.getByPropertyId(listing.propertyId);
+        }
+        setPriceHistory(
+          (data || []).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        );
+      } catch (e) {
+        setPriceHistory([]);
+      } finally {
+        setLoadingHistory(false);
+      }
+    };
+    fetchHistory();
+  }, [listing]);
 
   // Di chuyển kiểm tra listing xuống sau khi tất cả hooks được gọi
   if (!listing) {
@@ -95,7 +124,6 @@ const ListingDetailDialog: React.FC<ListingDetailDialogProps> = ({ open, onClose
   const images = listing.imageUrls && listing.imageUrls.length > 0 ? listing.imageUrls : [listing.featuredImageUrl];
   const address = listing.property?.address || {};
   const property = listing.property || {};
-  const agentInfo = [listing.agentName, listing.agentPhone, listing.agentEmail].filter(Boolean).join(' | ');
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth scroll="body" PaperProps={{ sx: { borderRadius: 3, p: 0 } }}>
@@ -219,13 +247,55 @@ const ListingDetailDialog: React.FC<ListingDetailDialogProps> = ({ open, onClose
               </Grid>
             )}
           </Grid>
-          {agentInfo && (
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="subtitle2">Agent Information</Typography>
-              <Typography variant="body2">{agentInfo}</Typography>
+          {/* Price History Section */}
+          {priceHistory.length > 0 && (
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>Price history</Typography>
+              <Box sx={{ border: `1px solid ${theme.palette.divider}`, borderRadius: 2, overflow: 'hidden' }}>
+                <Box sx={{ display: 'flex', fontWeight: 600, bgcolor: theme.palette.action.hover, p: 1 }}>
+                  <Box sx={{ flex: 1 }}>Date</Box>
+                  <Box sx={{ flex: 2 }}>Event</Box>
+                  <Box sx={{ flex: 2 }}>Price</Box>
+                </Box>
+                {priceHistory.map((item, idx) => {
+                  // Xác định event và phần trăm thay đổi
+                  let event = '';
+                  let priceChange = null;
+                  let pricePerSqm = '';
+                  let priceStr = formatCurrency(item.price);
+                  let percent = null;
+                  let color = undefined;
+                  let prev = priceHistory[idx + 1];
+                  if (item.status === 'COMPLETED') event = 'Price change';
+                  if (item.status === 'PENDING') event = 'Listed for sale';
+                  if (item.status === 'CANCELLED') event = 'Listing removed';
+                  if (listing.area && item.price) pricePerSqm = `$${Math.round(item.price / listing.area)}/sqft`;
+                  if (prev && prev.price && item.price) {
+                    percent = Math.round(((item.price - prev.price) / prev.price) * 1000) / 10;
+                    color = percent > 0 ? 'success.main' : 'error.main';
+                  }
+                  return (
+                    <Box key={item.id} sx={{ display: 'flex', alignItems: 'center', borderTop: idx === 0 ? 'none' : `1px solid ${theme.palette.divider}`, p: 1 }}>
+                      <Box sx={{ flex: 1 }}>{item.updatedAt ? new Date(item.updatedAt).toLocaleDateString() : ''}</Box>
+                      <Box sx={{ flex: 2, fontWeight: 500 }}>{event}</Box>
+                      <Box sx={{ flex: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography component="span">{priceStr}</Typography>
+                          {percent !== null && (
+                            <Typography component="span" sx={{ color: color, fontWeight: 600 }}>
+                              {percent > 0 ? `+${percent}%` : `${percent}%`}
+                            </Typography>
+                          )}
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">{pricePerSqm}</Typography>
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
             </Box>
           )}
-          <Button variant="contained" color="primary" fullWidth onClick={() => setContactOpen(true)}>
+          <Button sx={{ mt: 2 }} variant="contained" color="primary" fullWidth onClick={() => setContactOpen(true)}>
             Contact Agent
           </Button>
         </Box>

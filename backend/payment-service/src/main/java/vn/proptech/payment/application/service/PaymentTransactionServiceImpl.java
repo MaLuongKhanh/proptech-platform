@@ -11,6 +11,7 @@ import vn.proptech.payment.application.dto.output.GetPaymentTransactionResponse;
 import vn.proptech.payment.application.mapper.input.AddPaymentTransactionRequestMapper;
 import vn.proptech.payment.application.mapper.output.GetPaymentTransactionResponseMapper;
 import vn.proptech.payment.domain.model.PaymentTransaction;
+import vn.proptech.payment.domain.model.PaymentTransactionStatus;
 import vn.proptech.payment.domain.repository.PaymentTransactionRepository;
 import vn.proptech.payment.infrastructure.messaging.PaymentTransactionEventPublisher;
 
@@ -38,10 +39,11 @@ public class PaymentTransactionServiceImpl implements PaymentTransactionService 
                 request, 
                 newId
             );
-
             transaction.setActive(true);
 
             transaction.setCreatedAt(Instant.now());
+
+            transaction.setStatus(PaymentTransactionStatus.SUCCESS);
 
             PaymentTransaction savedTransaction = transactionRepository.save(transaction);
 

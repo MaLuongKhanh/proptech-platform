@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 public class AddAddressRequest {
     public String street;
     public String city;
-    public String state;
+    public String province;
     public String country;
-    public String zipCode;
+    public String postalCode;
     public double latitude;
     public double longitude;
 }

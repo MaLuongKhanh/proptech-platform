@@ -2,7 +2,6 @@ package vn.proptech.sale.application.mapper.input;
 
 import vn.proptech.sale.application.dto.input.AddTransactionRequest;
 import vn.proptech.sale.domain.model.Transaction;
-import vn.proptech.sale.domain.model.TransactionStatus;
 
 public class AddTransactionRequestMapper {
     public static Transaction AddTransactionMapDTOToEntity(AddTransactionRequest request, String id) {
@@ -14,7 +13,7 @@ public class AddTransactionRequestMapper {
                 .buyerIdentity(request.getBuyerIdentity())
                 .price(request.getPrice())
                 .agentId(request.getAgentId())
-                .status(TransactionStatus.PENDING)
+                .status(request.getStatus())
                 .build();
     }
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,5 +23,5 @@ public class UpdateUserRequest {
     @Size(max = 20)
     private String phoneNumber;
     
-    private String avatarUrl;
+    private MultipartFile avatar;
 }

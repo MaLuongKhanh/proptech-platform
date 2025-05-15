@@ -40,6 +40,7 @@ export const ListingPage: React.FC = () => {
   const [propertyType, setPropertyType] = useState<string>('all');
   const location = useLocation();
   const [initialized, setInitialized] = useState(false);
+  const [sold, setSold] = useState<string>('all');
 
   // Lấy filter params
   const getParams = useCallback((): ListingSearchParams => {
@@ -89,9 +90,14 @@ export const ListingPage: React.FC = () => {
       ...(price[1] < 10000000000 && { maxPrice: price[1] }),
       ...(search && { address: search }),
     })
-      .then(setListings)
+      .then((data) => {
+        let filtered = data;
+        if (sold === 'sold') filtered = filtered.filter(item => item.isSold === true);
+        if (sold === 'not_sold') filtered = filtered.filter(item => item.isSold === false);
+        setListings(filtered);
+      })
       .finally(() => setLoading(false));
-  }, [type, propertyType, bedrooms, price, search, initialized]);
+  }, [type, propertyType, bedrooms, price, search, initialized, sold]);
 
   // Xử lý popup detail và history
   useEffect(() => {
@@ -158,6 +164,14 @@ export const ListingPage: React.FC = () => {
             <MenuItem value="2">2+</MenuItem>
             <MenuItem value="3">3+</MenuItem>
             <MenuItem value="4">4+</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl className={styles.filterDropdown}>
+          <InputLabel>Sold</InputLabel>
+          <Select value={sold} label="Sold" onChange={(e) => setSold(e.target.value)}>
+            <MenuItem value="all">All</MenuItem>
+            <MenuItem value="sold">Sold</MenuItem>
+            <MenuItem value="not_sold">Not Sold</MenuItem>
           </Select>
         </FormControl>
       </Paper>

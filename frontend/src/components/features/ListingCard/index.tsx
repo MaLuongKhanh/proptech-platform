@@ -41,6 +41,7 @@ export const ListingCard: React.FC<ListingCardProps> = ({
     isActive,
     agentName,
     propertyId,
+    isSold,
   } = listing;
 
   const address = property?.address || {};
@@ -68,6 +69,15 @@ export const ListingCard: React.FC<ListingCardProps> = ({
           className={styles.chip}
           sx={{ position: 'absolute', top: 12, left: 12, zIndex: 2 }}
         />
+        {isSold && (
+          <Chip
+            label="Sold"
+            color="default"
+            size="small"
+            className={styles.chip}
+            sx={{ position: 'absolute', top: 12, left: 100, zIndex: 2, backgroundColor: '#888', color: '#fff' }}
+          />
+        )}
         <IconButton
           className={styles.favoriteBtn}
           onClick={(event) => {

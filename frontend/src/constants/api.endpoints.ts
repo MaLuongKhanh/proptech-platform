@@ -28,5 +28,24 @@ export const API_ENDPOINTS = {
     ADD_ROLE: (userId: string, roleName: string) => `/securities/users/${userId}/roles/${roleName}`,
     REMOVE_ROLE: (userId: string, roleName: string) => `/securities/users/${userId}/roles/${roleName}`,
   },
+  WALLET: {
+    BASE: '/payments/wallets',
+    BY_ID: (id: string) => `/payments/wallets/${id}`,
+    BY_USER_ID: (userId: string) => `/payments/wallets/${userId}`,
+    TOP_UP: (id: string) => `/payments/wallets/${id}/topup`,
+    PAYMENT: (id: string) => `/payments/wallets/${id}/payment`,
+  },
+  TRANSACTION: {
+    BASE: '/payments/transactions',
+    BY_ID: (id: string) => `/payments/transactions/${id}`,
+  },
+  SALE_TRANSACTION: {
+    BASE: '/sales/transactions',
+    BY_ID: (id: string) => `/sales/transactions/${id}`,
+  },
+  RENTAL_TRANSACTION: {
+    BASE: '/rentals/transactions',
+    BY_ID: (id: string) => `/rentals/transactions/${id}`,
+  },
   // Thêm các endpoints khác ở đây
 } as const; 

@@ -114,9 +114,11 @@ public class MongoListingRepository implements ListingRepository {
     
     
     @Override
-    public List<Listing> findByAgentId(String agentId, Integer page, Integer size) {
+    public List<Listing> findByAgentId(String agentId, Integer limit, Integer offset) {
         Query query = new Query(Criteria.where("agentId").is(agentId).and("isActive").is(true));
-        query.with(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt")));
+        int pageSize = limit != null ? limit : 10;
+        int pageNumber = offset != null ? offset / pageSize : 0;
+        query.with(PageRequest.of(pageNumber, pageSize, Sort.by(Sort.Direction.DESC, "createdAt")));
         return mongoTemplate.find(query, Listing.class);
         
     }

@@ -11,9 +11,9 @@ public class AddAddressRequestMapper {
         return Address.builder()
                 .street(addAddressRequest.getStreet())
                 .city(addAddressRequest.getCity())
-                .province(addAddressRequest.getState())
+                .province(addAddressRequest.getProvince())
                 .country(addAddressRequest.getCountry())
-                .postalCode(addAddressRequest.getZipCode())
+                .postalCode(addAddressRequest.getPostalCode())
                 .latitude(addAddressRequest.getLatitude())
                 .longitude(addAddressRequest.getLongitude())
                 .build();

@@ -4,15 +4,27 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+
 import vn.proptech.security.application.dto.input.UpdateUserRequest;
 import vn.proptech.security.application.dto.output.GetUserResponse;
 import vn.proptech.security.application.mapper.output.GetUserResponseMapper;
 import vn.proptech.security.domain.model.User;
 import vn.proptech.security.domain.repository.UserRepository;
 import vn.proptech.security.infrastructure.messaging.UserEventPublisher;
+import vn.proptech.security.application.extension.CommonCloudinaryAttribute;
+import vn.proptech.security.application.extension.CommonFileType;
 
+import java.io.File;
+import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -23,6 +35,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserEventPublisher userEventPublisher;
+    private final Cloudinary cloudinary;
 
     @Override
     public GetUserResponse getUserById(String id) {
@@ -73,8 +86,23 @@ public class UserServiceImpl implements UserService {
             user.setPhoneNumber(updateUserRequest.getPhoneNumber());
         }
         
-        if (updateUserRequest.getAvatarUrl() != null) {
-            user.setAvatarUrl(updateUserRequest.getAvatarUrl());
+        if (updateUserRequest.getAvatar() != null) {
+            try {
+                String newId = UUID.randomUUID().toString();
+                String assetFolderImage = CommonCloudinaryAttribute.assetFolderSecurity;
+                String publicId = User.class.getSimpleName() + "_" + newId;
+
+                // upload feature image
+                String featuredImageUrl = uploadImageToCloudinary(
+                        updateUserRequest.getAvatar(),
+                        assetFolderImage,
+                        publicId + "_featured",
+                        cloudinary
+                );
+                user.setAvatarUrl(featuredImageUrl);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to upload image: " + e.getMessage(), e);
+            }
         }
 
         user.setUpdatedAt(Instant.now());
@@ -168,5 +196,42 @@ public class UserServiceImpl implements UserService {
         userEventPublisher.publishUserUpdatedEvent(updatedUser);
         
         return true;
+    }
+
+    private String uploadImageToCloudinary(MultipartFile file, String assetFolder, String publicId, Cloudinary cloudinary) throws Exception {
+        // Danh sách các loại file được phép
+        List<String> allowedContentTypes = Arrays.asList(
+                CommonFileType.JPEG,
+                CommonFileType.PNG,
+                CommonFileType.WEBP,
+                CommonFileType.GIF
+        );
+        String contentType = file.getContentType();
+
+        // Kiểm tra loại file
+        if (!allowedContentTypes.contains(contentType)) {
+            throw new IllegalArgumentException("Invalid file type: " + contentType + ". Allowed types: " + String.join(", ", allowedContentTypes));
+        }
+
+        // Lưu file tạm thời vào local
+        String folderPath = Paths.get(System.getProperty("user.dir"), "upload").toString();
+        File uploadDir = new File(folderPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+        File tempFile = new File(folderPath, file.getOriginalFilename());
+        file.transferTo(tempFile);
+
+        // Upload lên Cloudinary
+        Map uploadResult = cloudinary.uploader().upload(tempFile, ObjectUtils.asMap(
+                "folder", assetFolder,
+                "public_id", publicId
+        ));
+
+        // Xóa file tạm thời
+        tempFile.delete();
+
+        // Trả về URL của ảnh
+        return (String) uploadResult.get("secure_url");
     }
 }
