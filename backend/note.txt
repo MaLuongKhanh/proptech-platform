@@ -19,3 +19,120 @@ Lợi ích:
 Khám phá động: Các dịch vụ tự động tìm thấy nhau mà không cần cấu hình tĩnh.
 Cân bằng tải: Hỗ trợ phân phối yêu cầu đến các instance khác nhau của một dịch vụ.
 Khả năng phục hồi: Nếu một instance gặp sự cố, hệ thống có thể chuyển sang instance khác.
+
+3. API Gateway
+Tác dụng: Đóng vai trò là điểm vào duy nhất cho tất cả các yêu cầu từ client đến hệ thống microservice.
+Giải thích:
+API Gateway hoạt động như một reverse proxy, nhận tất cả các yêu cầu từ client và định tuyến chúng đến các dịch vụ phù hợp. Nó cung cấp các chức năng như:
+Định tuyến yêu cầu đến các dịch vụ phù hợp
+Xác thực và phân quyền
+Chuyển đổi giao thức
+Cân bằng tải
+Giới hạn tốc độ (Rate limiting)
+Lợi ích:
+Bảo mật: Tập trung xử lý bảo mật tại một điểm
+Đơn giản hóa client: Client chỉ cần tương tác với một endpoint
+Tối ưu hóa hiệu suất: Có thể thực hiện caching và compression
+
+4. Listing Service
+Tác dụng: Quản lý thông tin về các bất động sản được đăng bán/cho thuê.
+Giải thích:
+Service này chịu trách nhiệm xử lý các thao tác liên quan đến danh sách bất động sản như:
+Tạo, cập nhật, xóa thông tin bất động sản
+Tìm kiếm và lọc bất động sản theo nhiều tiêu chí
+Quản lý hình ảnh và tài liệu liên quan
+Tích hợp với Cloudinary để lưu trữ hình ảnh
+Lợi ích:
+Quản lý dữ liệu tập trung
+Tối ưu hóa hiệu suất tìm kiếm
+Dễ dàng mở rộng và bảo trì
+
+5. Payment Service
+Tác dụng: Xử lý các giao dịch thanh toán và quản lý ví điện tử.
+Giải thích:
+Service này đảm nhiệm:
+Xử lý thanh toán cho các gói dịch vụ
+Quản lý ví điện tử của người dùng
+Theo dõi lịch sử giao dịch
+Tích hợp với các cổng thanh toán
+Lợi ích:
+Bảo mật thông tin thanh toán
+Xử lý giao dịch đáng tin cậy
+Dễ dàng mở rộng phương thức thanh toán
+
+6. User Service
+Tác dụng: Quản lý thông tin người dùng và xác thực.
+Giải thích:
+Service này chịu trách nhiệm:
+Đăng ký và đăng nhập người dùng
+Quản lý thông tin cá nhân
+Phân quyền người dùng (Admin, Agent, User)
+Quản lý phiên đăng nhập
+Lợi ích:
+Bảo mật thông tin người dùng
+Quản lý quyền truy cập hiệu quả
+Dễ dàng mở rộng tính năng người dùng
+
+7. Sale Service
+Tác dụng: Quản lý các giao dịch mua bán và cho thuê bất động sản.
+Giải thích:
+Service này xử lý:
+Tạo và theo dõi các giao dịch
+Quản lý trạng thái giao dịch
+Tích hợp với Payment Service để xử lý thanh toán
+Lưu trữ lịch sử giao dịch
+Lợi ích:
+Theo dõi giao dịch minh bạch
+Xử lý giao dịch an toàn
+Dễ dàng báo cáo và thống kê
+
+8. Rental Service
+Tác dụng: Quản lý các hoạt động cho thuê bất động sản.
+Giải thích:
+Service này chịu trách nhiệm:
+Quản lý hợp đồng cho thuê
+Theo dõi thời hạn thuê
+Xử lý gia hạn hợp đồng
+Quản lý thanh toán tiền thuê
+Tích hợp với Payment Service để xử lý thanh toán định kỳ
+Lợi ích:
+Quản lý cho thuê hiệu quả
+Tự động hóa quy trình thanh toán
+Dễ dàng theo dõi và báo cáo
+
+9. Monitoring Stack
+Tác dụng: Giám sát hiệu suất và sức khỏe của hệ thống.
+Giải thích:
+Sử dụng Prometheus và Grafana để:
+Thu thập metrics từ các service
+Hiển thị dashboard theo dõi
+Cảnh báo khi có vấn đề
+Phân tích hiệu suất hệ thống
+Lợi ích:
+Phát hiện vấn đề sớm
+Tối ưu hóa hiệu suất
+Đảm bảo độ tin cậy của hệ thống
+
+10. Message Broker (RabbitMQ)
+Tác dụng: Xử lý giao tiếp bất đồng bộ giữa các service.
+Giải thích:
+RabbitMQ cung cấp:
+Hàng đợi tin nhắn giữa các service
+Xử lý bất đồng bộ
+Đảm bảo tin nhắn được gửi đến đúng đích
+Lợi ích:
+Tăng độ tin cậy của hệ thống
+Xử lý tải cao hiệu quả
+Dễ dàng mở rộng
+
+11. Database (MongoDB)
+Tác dụng: Lưu trữ dữ liệu cho các service.
+Giải thích:
+MongoDB được sử dụng để:
+Lưu trữ dữ liệu phi cấu trúc
+Hỗ trợ truy vấn phức tạp
+Dễ dàng mở rộng
+Lợi ích:
+Hiệu suất cao
+Linh hoạt trong lưu trữ dữ liệu
+Dễ dàng mở rộng
