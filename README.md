@@ -67,6 +67,7 @@ backend/
 ├── payment-service/       # Payment processing service
 ├── user-service/         # User management service
 ├── sale-service/         # Transaction service
+├── rental-service/       # Property rental service
 └── docker-compose/       # Docker configuration
     ├── docker-compose.swarm.yml
     ├── deploy-swarm.bat
@@ -103,22 +104,42 @@ CLOUDINARY_API_SECRET=your_api_secret
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/proptech-platform.git
+git clone https://github.com/MaLuongKhanh/proptech-platform.git
 cd proptech-platform
 ```
 
-2. Start the backend services
+2. Khởi động hệ thống
 ```bash
 cd backend/docker-compose
-docker-compose up -d
+deploy-swarm.bat
 ```
 
-3. Start the frontend development server
-```bash
-cd frontend
-npm install
-npm run dev
-```
+Script deploy-swarm.bat sẽ tự động:
+- Kiểm tra và khởi tạo Docker Swarm nếu cần
+- Build các Docker image
+- Push images lên registry (nếu sử dụng registry bên ngoài)
+- Deploy stack lên Docker Swarm
+- Khởi động tất cả các service:
+  - Config Server (port 8888)
+  - Discovery Server (port 8761)
+  - API Gateway (port 8080)
+  - Listing Service (port 8081)
+  - Payment Service (port 8083)
+  - Security Service (port 8082)
+  - Sale Service (port 8084)
+  - Rental Service (port 8085)
+  - RabbitMQ (port 5672, management UI: 15672)
+  - MongoDB (port 27017)
+  - Prometheus (port 9090)
+  - Grafana (port 3000)
+
+3. Truy cập các service:
+- Frontend: http://localhost:5173
+- API Gateway: http://localhost:8080
+- Eureka Dashboard: http://localhost:8761
+- RabbitMQ Management: http://localhost:15672
+- Grafana: http://localhost:3000
+- Prometheus: http://localhost:9090
 
 ### Production Deployment
 
