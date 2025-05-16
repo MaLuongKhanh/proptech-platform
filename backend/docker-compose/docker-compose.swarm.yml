@@ -398,6 +398,32 @@ services:
       restart_policy:
         condition: on-failure
 
+  # Frontend - React application
+  frontend:
+    image: ${REGISTRY:-localhost}/proptech/frontend:latest
+    build:
+      context: ../../frontend
+    ports:
+      - "80:80"
+    networks:
+      - proptech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
 volumes:
   mongodb_data:
     driver: local

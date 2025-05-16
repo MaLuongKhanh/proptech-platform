@@ -116,10 +116,11 @@ deploy-swarm.bat
 
 Script deploy-swarm.bat sẽ tự động:
 - Kiểm tra và khởi tạo Docker Swarm nếu cần
-- Build các Docker image
+- Build các Docker image (bao gồm cả frontend)
 - Push images lên registry (nếu sử dụng registry bên ngoài)
 - Deploy stack lên Docker Swarm
 - Khởi động tất cả các service:
+  - Frontend (port 80)
   - Config Server (port 8888)
   - Discovery Server (port 8761)
   - API Gateway (port 8080)
@@ -134,7 +135,7 @@ Script deploy-swarm.bat sẽ tự động:
   - Grafana (port 3000)
 
 3. Truy cập các service:
-- Frontend: http://localhost:5173
+- Frontend: http://localhost
 - API Gateway: http://localhost:8080
 - Eureka Dashboard: http://localhost:8761
 - RabbitMQ Management: http://localhost:15672

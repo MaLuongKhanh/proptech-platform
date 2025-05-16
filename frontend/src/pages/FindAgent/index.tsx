@@ -152,8 +152,8 @@ export const FindAgentPage: React.FC = () => {
     <Box>
       {/* Hero Section */}
       <Box className={styles.heroSection}>
-        <Container maxWidth="lg">
-          <Typography variant="h3" fontWeight={600} gutterBottom>
+        <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
+          <Typography variant="h2" fontWeight={600} gutterBottom sx={{ textAlign: 'center' }}>
             A great agent makes all the difference
           </Typography>
           
@@ -209,11 +209,11 @@ export const FindAgentPage: React.FC = () => {
       {/* Main Content */}
       <Container maxWidth="lg">
         {/* Location Header */}
-        <Box mt={4} mb={3}>
-          <Typography variant="h4" fontWeight={600} gutterBottom>
+        <Box mt={4} mb={3} sx={{ textAlign: 'center' }}>
+          <Typography variant="h4" fontWeight={600} gutterBottom sx={{ textAlign: 'center' }}>
             Real Estate Agents in Chicago, IL
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" color="text.secondary" sx={{ textAlign: 'center' }}>
             With over a million agents from all the top brokerages, a local agent knows your market and will guide you through the process from start to finish.
           </Typography>
         </Box>
@@ -344,7 +344,7 @@ export const FindAgentPage: React.FC = () => {
         
         {/* FAQ Section */}
         <Box mt={8} mb={5}>
-          <Typography variant="h4" fontWeight={600} gutterBottom>
+          <Typography variant="h4" fontWeight={600} gutterBottom sx={{ textAlign: 'center', paddingBottom: '20px' }}>
             Frequently asked questions
           </Typography>
           
