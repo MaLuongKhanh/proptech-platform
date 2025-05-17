@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { userService } from '../../../services/user.service';
+import { paymentService } from '../../../services/payment.service';
 import { User } from '../../../types/user.types';
 
 const AccountManagement: React.FC = () => {
@@ -42,7 +43,7 @@ const AccountManagement: React.FC = () => {
   const [selectedRole, setSelectedRole] = useState<string>('');
   const [alert, setAlert] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
-  const availableRoles = ['ROLE_USER', 'ROLE_AGENT', 'ROLE_ADMIN'];
+  const availableRoles = ['USER', 'AGENT', 'ADMIN'];
 
   useEffect(() => {
     fetchUsers();
@@ -77,6 +78,18 @@ const AccountManagement: React.FC = () => {
           break;
         case 'addRole':
           success = await userService.addRole(selectedUser.id, selectedRole);
+          if (success && selectedRole === 'AGENT') {
+            try {
+              await paymentService.createWallet({
+                userId: selectedUser.id,
+                currency: 'VND',
+                balance: 0
+              });
+              console.log('Created wallet for new agent');
+            } catch (error) {
+              console.error('Failed to create wallet for agent:', error);
+            }
+          }
           break;
         case 'removeRole':
           success = await userService.removeRole(selectedUser.id, selectedRole);

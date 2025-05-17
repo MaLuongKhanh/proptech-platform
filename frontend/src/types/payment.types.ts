@@ -20,6 +20,8 @@ export interface Transaction {
 
 export interface CreateWalletRequest {
   userId: string;
+  currency: string;
+  balance: number;
 }
 
 export interface UpdateWalletRequest {

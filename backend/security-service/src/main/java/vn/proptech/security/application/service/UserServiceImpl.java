@@ -165,11 +165,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         
-        if (user.getRoles().contains(roleName)) {
-            return false; // Role already assigned
+        String normalizedRoleName = roleName.replaceFirst("^ROLE_", "").toUpperCase();
+
+        if (user.getRoles().contains(normalizedRoleName)) {
+            return false; // Vai trò đã tồn tại, không thêm
+        } else {
+            user.getRoles().add(normalizedRoleName); // Thêm vai trò khác
         }
         
-        user.getRoles().add(roleName);
         user.setUpdatedAt(Instant.now());
         User updatedUser = userRepository.save(user);
         
@@ -184,11 +187,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         
-        if (!user.getRoles().contains(roleName)) {
+        String normalizedRoleName = roleName.replaceFirst("^ROLE_", "").toUpperCase();
+
+        if (!user.getRoles().contains(normalizedRoleName)) {
             return false; // Role not assigned
+        } else {
+            user.getRoles().remove(normalizedRoleName);
         }
-        
-        user.getRoles().remove(roleName);
         user.setUpdatedAt(Instant.now());
         User updatedUser = userRepository.save(user);
         
