@@ -129,11 +129,6 @@ public class AdminInitializer {
         // Kiểm tra nếu hệ thống chưa có user nào
         if (userRepository.count() == 0) {
             log.info("Chưa có user nào, tạo tài khoản admin mặc định");
-            
-            // Lấy Role ADMIN đã tạo
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy ROLE_ADMIN"));
-            
             // Tạo user admin
             User adminUser = new User();
             adminUser.setUsername("admin");
@@ -142,7 +137,7 @@ public class AdminInitializer {
             adminUser.setFullName("Administrator");
             adminUser.setPhoneNumber("0000000000");
             adminUser.setEnabled(true);
-            adminUser.setRoles(Set.of(adminRole.getName()));
+            adminUser.setRoles(Set.of("ADMIN"));
             
             userRepository.save(adminUser);
             log.info("Đã tạo tài khoản admin mặc định (username: admin, password: admin)");
